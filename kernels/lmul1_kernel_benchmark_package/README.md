@@ -1,26 +1,14 @@
-# LMUL=1 Optimized RVV SGEMM Micro-Kernel (VLEN=256, N=8)
+| Aspect               | **Baseline Kernel (LMUL=1)** | Reason / Meaning                       |
+| -------------------- | ---------------------------- | -------------------------------------- |
+| Kernel shape         | **16 × 8**                   | Computes 16 rows × 8 columns per block |
+| LMUL                 | **1**                        | Uses minimum vector register grouping  |
+| Vector type          | `vfloat32m1_t`               | Narrower vectors                       |
+| Vector length (main) | VL = 8                       | Two vectors needed for 16 rows         |
+| Accumulators         | 16 vector accumulators       | Split across two halves of M           |
+| M handling           | 16 → 8 → 4 → 2 → 1           | Full tail support                      |
+| N handling           | 8 → 4 → 2 → 1                | Full tail support                      |
+| Arithmetic           | FMA (`vfmacc`)               | Compute-bound design                   |
+| Memory pattern       | Reuse A vectors, scalar B    | Optimized for cache                    |
+| Role                 | **Reference / baseline**     | Comparison point for LMUL scaling      |
 
-This folder contains a **self-contained** micro-kernel + benchmark package for:
-
-- **Kernel:** `sgemm_kernel_16x8_zvl256b_lmul1_opt.c`  
-- **Benchmark:** `sgemm_kernel_16x8_zvl256b_lmul1_opt_benchmark.c`  
-- **Build:** `Makefile`  
-- **Run:** `run_bench_lmul1.sh`
-
-## Build
-```bash
-make
-```
-
-## Run
-```bash
-./run_bench_lmul1.sh
-```
-
-## Notes
-- Packed layout expected by the kernel (same layout used in the benchmark):
-  - `A` is stored as `K` blocks of `M` (so `A[k*M + i]`)
-  - `B` is stored as `K` blocks of `N` (so `B[k*N + j]`)
-  - `C` is stored column-major with `ldc = M` (so `C[j*ldc + i]`)
-- For LMUL=1 on VLEN=256 and FP32 (`SEW=32`), **one vector holds up to 8 floats**.
-  So the main **M=16** block is computed as **two vectors (8+8)**.
+The LMUL=1 kernel is the baseline 16×8 micro-kernel that uses smaller vectors and more instructions, serving as the reference for all LMUL optimizations.
