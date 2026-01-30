@@ -1,24 +1,13 @@
-LMUL=4 SGEMM Micro-Kernel Benchmark Package (VLEN=256, float32)
+| Aspect                    | **Baseline (LMUL=1)** | **Kernel-3 (LMUL=4)**                  |
+| ------------------------- | --------------------- | -------------------------------------- |
+| LMUL                      | 1                     | **4**                                  |
+| Tile size                 | **16 × 8**            | **32 × 4**                             |
+| Vector type               | `vfloat32m1_t`        | **`vfloat32m4_t`**                     |
+| Rows per vector           | 8–16                  | **32**                                 |
+| Columns per block         | 8                     | **4 (reduced)**                        |
+| Accumulators              | 8 vectors             | **4 vectors**                          |
+| Register pressure         | Low                   | **Controlled / safe**                  |
+| Vector utilization        | Moderate              | **Higher**                             |
+| Design change vs baseline | —                     | **Increase M, reduce N to fit LMUL=4** |
 
-Files:
-- sgemm_kernel_32x4_zvl256b_lmul4.c
-    LMUL=4 kernel, main block 32x4 (chosen to keep v-register usage safe)
-- sgemm_kernel_32x4_zvl256b_lmul4_benchmark.c
-    Single-run microbenchmark driver (prints one-line metrics)
-- Makefile
-    Builds sgemm_bench_lmul4 and provides helper targets (24h, monitor, etc.)
-- run_bench_lmul4.sh
-    24-hour loop runner (interactive/background)
-
-Build:
-  make
-
-Quick test:
-  ./sgemm_bench_lmul4 1024 1024 1024
-
-24h:
-  make 24h
-Background:
-  make 24h-bg
-Monitor:
-  make monitor
+Kernel-3 scales the baseline 16×8 design to LMUL=4 by doubling the row dimension and halving the column dimension to maximize vector utilization while remaining register-safe
