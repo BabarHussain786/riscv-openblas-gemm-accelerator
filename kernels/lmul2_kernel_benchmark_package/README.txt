@@ -10,3 +10,5 @@
 | Arithmetic           | FMA (`vfmacc`)                  | High compute intensity                 |
 | Memory pattern       | Reuse A vectors, scalar B       | Cache-friendly                         |
 | Role                 | **Optimized variant of LMUL=1** | Tests benefit of larger LMUL           |
+
+LMUL=2 keeps the same 16×8 computation shape as the baseline but uses wider vector registers to increase instruction-level parallelism
