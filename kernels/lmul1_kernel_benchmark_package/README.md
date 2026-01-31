@@ -1,3 +1,14 @@
+Baseline Kernel — File Description
+
+| File                                                     | Description                                                                                                                                                                                                                                                |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **sgemm_kernel_16x8_zvl256b.c**                          | The official OpenBLAS baseline SGEMM micro-kernel for RISC-V with RVV (vector length = 256 bits). It implements a **16×8** register-tiled single-precision GEMM compute kernel using RVV intrinsics, serving as the reference for optimized LMUL variants. |
+| **sgemm_kernel_16x8_zvl256b_benchmark.c** *(if present)* | Benchmark driver calls the baseline kernel to measure performance (GFLOPS, memory bandwidth, vector efficiency) for various M/N/K inputs.                                                                                                                  |
+| **Makefile** *(in that directory)*                       | Build recipe for the baseline kernel + benchmark driver.                                                                                                                                                                                                   |
+| **run_bench_baseline.sh** *(if present)*                 | Script that runs the baseline kernel in long tests (24h, background, monitoring).                                                                                                                                                                          |
+| **README.md** *(in repo root or kernel directory)*       | Documentation of how the baseline kernel fits into the OpenBLAS build, calling conventions, and test workflows.                                                                                                                                            |
+
+
 | Aspect               | **Baseline Kernel (LMUL=1)** | Reason / Meaning                       |
 | -------------------- | ---------------------------- | -------------------------------------- |
 | Kernel shape         | **16 × 8**                   | Computes 16 rows × 8 columns per block |
