@@ -6,7 +6,7 @@ Baseline Kernel — File Description
 | **sgemm_kernel_16x8_zvl256b_benchmark.c**  | Benchmark driver calls the baseline kernel to measure performance (GFLOPS, memory bandwidth, vector efficiency) for various M/N/K inputs.                                                                                                                  |
 | **Makefile** **                       | Build recipe for the baseline kernel + benchmark driver.                                                                                                                                                                                                   |
 | **run_bench_baseline.sh**                 | Script that runs the baseline kernel in long tests (24h, background, monitoring).                                                                                                                                                                          |
-| **README.md**        | Documentation of how the baseline kernel fits into the OpenBLAS build, calling conventions, and test workflows.                                                                                                                                            |
+                                                                                                                                          |
 
 
 | Aspect               | **Baseline Kernel (LMUL=1)** | Reason / Meaning                       |
