@@ -19,9 +19,7 @@ for (j in N/8) {
       // FMA updates
       r0_0-7_0 = vfmacc(r0_0-7_0, B0-7, A0);
       r0_1-7_1 = vfmacc(r0_1-7_1, B0-7, A1);
-    }
-  }
-}
+    }}}
 
 
 
