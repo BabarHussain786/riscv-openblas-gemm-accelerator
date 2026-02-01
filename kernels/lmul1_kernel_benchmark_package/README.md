@@ -1,4 +1,4 @@
-// RVV SGEMM: 16×8 block (LMUL=1, VLEN=256) 
+//RVV SGEMM: 16×8 block (LMUL=1, VLEN=256) 
 for (j in N/8) {
   for (i in M/16) {
     // Load 16 A rows (2 vectors), 8 B scalars
