@@ -1,32 +1,104 @@
 Microkernel Computational Block
 The optimized RVV SGEMM microkernel employs a register-blocking strategy of $16 \times 8$ elements, implemented as follows:
 
-for (BLASLONG j = 0; j < N/8; j += 1) {         // N-dimension in steps of 8
-    for (BLASLONG i = 0; i < M/16; i += 1) {    // M-dimension in steps of 16
-        // Load 16 rows of A as two vector registers
-        vfloat32m1_t A0 = __riscv_vle32_v_f32m1(&A[0], 8);   // Rows 0-7
-        vfloat32m1_t A1 = __riscv_vle32_v_f32m1(&A[8], 8);   // Rows 8-15      
-        // Load and broadcast 8 columns of B elements
-        float B0 = B[0], B1 = B[1], B2 = B[2], B3 = B[3];
-        float B4 = B[4], B5 = B[5], B6 = B[6], B7 = B[7];  
-        // Initialize 16 accumulator registers (8 columns × 2 vector groups)
-        vfloat32m1_t r0_0 = __riscv_vfmul_vf_f32m1(A0, B0, 8);  // Column 0, rows 0-7
-        vfloat32m1_t r0_1 = __riscv_vfmul_vf_f32m1(A1, B0, 8);  // Column 0, rows 8-15
-        // ... (r1_0, r1_1, ..., r7_0, r7_1 for columns 1-7) 
-        // Depth-wise accumulation over K dimension
+/**
+ * RVV SGEMM Microkernel (LMUL=1, VLEN=256, N=8)
+ * Main computational block performing C += α·A·B
+ * 
+ * Architecture: RISC-V RVV with VLEN=256, SEW=32, LMUL=1
+ * Block size: M=16 × N=8 (16 rows, 8 columns)
+ * Register usage: 2 A vectors + 8 B scalars + 16 accumulators
+ */
+
+/* -----------------------------------------------------------
+ * N-dimension: Process in blocks of 8 columns
+ * ----------------------------------------------------------- */
+for (BLASLONG j = 0; j < N/8; j += 1) {
+    
+    /* -------------------------------------------------------
+     * M-dimension: Process in blocks of 16 rows (2 vectors)
+     * ------------------------------------------------------- */
+    for (BLASLONG i = 0; i < M/16; i += 1) {
+        
+        // Pointer arithmetic for packed matrices
+        BLASLONG ai = m_top * K;  // A offset: K blocks of M
+        BLASLONG bi = n_top * K;  // B offset: K blocks of N
+        
+        // --- LOAD PHASE: First K iteration ---
+        // Load 8 B elements (scalar broadcast to vectors)
+        float B0 = B[bi+0], B1 = B[bi+1], B2 = B[bi+2], B3 = B[bi+3];
+        float B4 = B[bi+4], B5 = B[bi+5], B6 = B[bi+6], B7 = B[bi+7];
+        bi += 8;
+        
+        // Load 16 A rows as two vector registers (8 elements each)
+        vfloat32m1_t A0 = __riscv_vle32_v_f32m1(&A[ai + 0], gvl8);  // Rows 0-7
+        vfloat32m1_t A1 = __riscv_vle32_v_f32m1(&A[ai + 8], gvl8);  // Rows 8-15
+        ai += 16;
+        
+        // --- INITIALIZE ACCUMULATORS ---
+        // 8 columns × 2 vector groups = 16 accumulator registers
+        vfloat32m1_t r0_0 = __riscv_vfmul_vf_f32m1(A0, B0, gvl8);  // Col 0, rows 0-7
+        vfloat32m1_t r0_1 = __riscv_vfmul_vf_f32m1(A1, B0, gvl8);  // Col 0, rows 8-15
+        
+        vfloat32m1_t r1_0 = __riscv_vfmul_vf_f32m1(A0, B1, gvl8);  // Col 1, rows 0-7
+        vfloat32m1_t r1_1 = __riscv_vfmul_vf_f32m1(A1, B1, gvl8);  // Col 1, rows 8-15
+        
+        // ... Columns 2-6 (r2_0/r2_1 through r6_0/r6_1) ...
+        
+        vfloat32m1_t r7_0 = __riscv_vfmul_vf_f32m1(A0, B7, gvl8);  // Col 7, rows 0-7
+        vfloat32m1_t r7_1 = __riscv_vfmul_vf_f32m1(A1, B7, gvl8);  // Col 7, rows 8-15
+        
+        /* -------------------------------------------------------
+         * K-DIMENSION: Depth-wise accumulation loop
+         * ------------------------------------------------------- */
         for (BLASLONG k = 1; k < K; k++) {
-            // Load next tile of B (8 scalars)
-            B0 = B[8*k+0]; B1 = B[8*k+1]; ... B7 = B[8*k+7];    
-            // Load next tile of A (2 vectors)
-            A0 = __riscv_vle32_v_f32m1(&A[16*k + 0], 8);
-            A1 = __riscv_vle32_v_f32m1(&A[16*k + 8], 8); 
-            // Fused multiply-accumulate operations
-            r0_0 = __riscv_vfmacc_vf_f32m1(r0_0, B0, A0, 8);
-            r0_1 = __riscv_vfmacc_vf_f32m1(r0_1, B0, A1, 8);
-            // ... (7 more columns)
+            
+            // Load next 8 B elements
+            B0 = B[bi+0]; B1 = B[bi+1]; B2 = B[bi+2]; B3 = B[bi+3];
+            B4 = B[bi+4]; B5 = B[bi+5]; B6 = B[bi+6]; B7 = B[bi+7];
+            bi += 8;
+            
+            // Load next 16 A rows
+            A0 = __riscv_vle32_v_f32m1(&A[ai + 0], gvl8);
+            A1 = __riscv_vle32_v_f32m1(&A[ai + 8], gvl8);
+            ai += 16;
+            
+            // --- FUSED MULTIPLY-ACCUMULATE (FMA) ---
+            // Column 0
+            r0_0 = __riscv_vfmacc_vf_f32m1(r0_0, B0, A0, gvl8);
+            r0_1 = __riscv_vfmacc_vf_f32m1(r0_1, B0, A1, gvl8);
+            
+            // Column 1
+            r1_0 = __riscv_vfmacc_vf_f32m1(r1_0, B1, A0, gvl8);
+            r1_1 = __riscv_vfmacc_vf_f32m1(r1_1, B1, A1, gvl8);
+            
+            // ... Columns 2-6 ...
+            
+            // Column 7
+            r7_0 = __riscv_vfmacc_vf_f32m1(r7_0, B7, A0, gvl8);
+            r7_1 = __riscv_vfmacc_vf_f32m1(r7_1, B7, A1, gvl8);
         }
-        // Store accumulated results to C matrix
-    }}
+        
+        // --- STORE PHASE: Write results to C matrix ---
+        BLASLONG ci = n_top * ldc + m_top;
+        
+        // Column 0
+        vfloat32m1_t c0_0 = __riscv_vle32_v_f32m1(&C[ci + 0*ldc + 0], gvl8);
+        vfloat32m1_t c0_1 = __riscv_vle32_v_f32m1(&C[ci + 0*ldc + 8], gvl8);
+        c0_0 = __riscv_vfmacc_vf_f32m1(c0_0, alpha, r0_0, gvl8);
+        c0_1 = __riscv_vfmacc_vf_f32m1(c0_1, alpha, r0_1, gvl8);
+        __riscv_vse32_v_f32m1(&C[ci + 0*ldc + 0], c0_0, gvl8);
+        __riscv_vse32_v_f32m1(&C[ci + 0*ldc + 8], c0_1, gvl8);
+        
+        // ... Columns 1-7 ...
+        
+        // Update M position
+        m_top += 16;
+    }
+    
+    // Update N position
+    n_top += 8;
+}
 
 
 
