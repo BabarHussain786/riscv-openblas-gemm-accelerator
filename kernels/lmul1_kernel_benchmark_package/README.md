@@ -1,28 +1,27 @@
-Microkernel Computational Block
-The optimized RVV SGEMM microkernel employs a register-blocking strategy of $16 \times 8$ elements, implemented as follows:
-
-/* RVV SGEMM Microkernel: 16×8 block (LMUL=1, VLEN=256) */
-// Main 16×8 block processing
-for (j = 0; j < N/8; j++) {           // 8 columns at a time
-    for (i = 0; i < M/16; i++) {      // 16 rows as 2 vectors (8+8)    
-        // Load phase
-        float B0-7[8];                 // 8 B elements
-        vfloat32m1_t A0, A1;           // 16 A rows (8+8)  
-        // Initialize 16 accumulators (8 cols × 2 vecs)
-        vfloat32m1_t r0_0-7_0, r0_1-7_1;
-        // K-loop: depth accumulation
-        for (k = 0; k < K; k++) {
-            // FMA: 16 accumulators × 8 columns = 128 FMAs/cycle
-            r0_0 = vfmacc(r0_0, B0, A0);
-            r0_1 = vfmacc(r0_1, B0, A1);
-            // ... repeat for columns 1-7
-        }
-        
-        // Store to C
-        // C[j*ldc + i] += α × accumulators
+// RVV SGEMM: 16×8 block (LMUL=1, VLEN=256)
+for (j in N/8) {
+  for (i in M/16) {
+    // Load 16 A rows (2 vectors), 8 B scalars
+    A0 = vle32(A[0:8]);   // Rows 0-7
+    A1 = vle32(A[8:16]);  // Rows 8-15
+    B0-7 = B[0:8];        // 8 columns
+    
+    // 16 accumulators (8 cols × 2 vecs)
+    r0_0-7_0 = vfmul(A0, B0-7);
+    r0_1-7_1 = vfmul(A1, B0-7);
+    
+    // K-accumulation
+    for (k = 1; k < K; k++) {
+      A0 = vle32(A[k*16 + 0:8]);
+      A1 = vle32(A[k*16 + 8:16]);
+      B0-7 = B[k*8 + 0:8];
+      
+      // FMA updates
+      r0_0-7_0 = vfmacc(r0_0-7_0, B0-7, A0);
+      r0_1-7_1 = vfmacc(r0_1-7_1, B0-7, A1);
     }
+  }
 }
-
 
 
 
