@@ -1,22 +1,26 @@
-Kernel: Computes C += α·A·B once (single multiplication).
+## 🏗️ Architecture Overview
 
-Benchmark Driver: Calls kernel multiple times for timing/accuracy:
+This project consists of two main components:
 
-Controls iterations (repeats for timing)
+| Component | Purpose | What It Does | Analogy |
+|-----------|---------|--------------|---------|
+| **Microkernel** (`sgemm_kernel_*.c`) | **Computation** | Performs single matrix multiplication: `C += α·A·B` | Worker doing one job |
+| **Benchmark Driver** (`*_benchmark.c`) | **Measurement** | Times kernel execution, calculates performance metrics | Manager timing worker |
 
-Handles memory allocation/initialization
+---
 
-Measures execution time
+### 🔧 **Microkernel** (`sgemm_kernel_16x8_zvl256b_lmul1_opt.c`)
+The core computational unit optimized for RISC-V Vector (RVV) extensions:
+- **Single operation**: Computes `C += α·A·B` exactly once
+- **No timing logic**: Pure computation only
+- **No iterations**: Each call performs one GEMM
+- **No memory management**: Operates on pre-allocated buffers
+- **Returns**: 0 on success, updates C matrix in-place
 
-Calculates GFLOPS/GBs
-
-Performs correctness verification (optional)
-
-Simple analogy:
-
-Kernel = Worker doing one job
-
-Benchmark Driver = Manager timing worker doing same job N times
+**Usage:**
+```c
+// One-time computation
+sgemm_kernel_16x8_zvl256b_lmul1_opt(M, N, K, alpha, A, B, C, ldc);
 
 **Baseline Kernel — File Description**
 
