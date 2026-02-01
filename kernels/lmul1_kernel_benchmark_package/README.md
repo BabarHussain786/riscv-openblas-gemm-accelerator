@@ -2,18 +2,14 @@ Microkernel Computational Block
 The optimized RVV SGEMM microkernel employs a register-blocking strategy of $16 \times 8$ elements, implemented as follows:
 
 /* RVV SGEMM Microkernel: 16×8 block (LMUL=1, VLEN=256) */
-
 // Main 16×8 block processing
 for (j = 0; j < N/8; j++) {           // 8 columns at a time
-    for (i = 0; i < M/16; i++) {      // 16 rows as 2 vectors (8+8)
-        
+    for (i = 0; i < M/16; i++) {      // 16 rows as 2 vectors (8+8)    
         // Load phase
         float B0-7[8];                 // 8 B elements
-        vfloat32m1_t A0, A1;           // 16 A rows (8+8)
-        
+        vfloat32m1_t A0, A1;           // 16 A rows (8+8)  
         // Initialize 16 accumulators (8 cols × 2 vecs)
         vfloat32m1_t r0_0-7_0, r0_1-7_1;
-        
         // K-loop: depth accumulation
         for (k = 0; k < K; k++) {
             // FMA: 16 accumulators × 8 columns = 128 FMAs/cycle
