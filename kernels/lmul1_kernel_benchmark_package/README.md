@@ -22,6 +22,7 @@ The core computational unit optimized for RISC-V Vector (RVV) extensions:
 // One-time computation
 sgemm_kernel_16x8_zvl256b_lmul1_opt(M, N, K, alpha, A, B, C, ldc);
 
+
 **Baseline Kernel — File Description**
 
 | File                                                     | Description                                                                                                                                                                                                                                                |
