@@ -31,8 +31,7 @@ for (BLASLONG j = 0; j < N/8; j += 1) {         // N-dimension in steps of 8
             // ... (7 more columns)
         }
         // Store accumulated results to C matrix
-    }
-}
+    }}
 
 
 
