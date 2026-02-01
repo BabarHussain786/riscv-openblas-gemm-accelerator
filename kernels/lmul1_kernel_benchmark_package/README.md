@@ -5,26 +5,21 @@ for (BLASLONG j = 0; j < N/8; j += 1) {         // N-dimension in steps of 8
     for (BLASLONG i = 0; i < M/16; i += 1) {    // M-dimension in steps of 16
         // Load 16 rows of A as two vector registers
         vfloat32m1_t A0 = __riscv_vle32_v_f32m1(&A[0], 8);   // Rows 0-7
-        vfloat32m1_t A1 = __riscv_vle32_v_f32m1(&A[8], 8);   // Rows 8-15
-        
+        vfloat32m1_t A1 = __riscv_vle32_v_f32m1(&A[8], 8);   // Rows 8-15      
         // Load and broadcast 8 columns of B elements
         float B0 = B[0], B1 = B[1], B2 = B[2], B3 = B[3];
-        float B4 = B[4], B5 = B[5], B6 = B[6], B7 = B[7];
-        
+        float B4 = B[4], B5 = B[5], B6 = B[6], B7 = B[7];  
         // Initialize 16 accumulator registers (8 columns × 2 vector groups)
         vfloat32m1_t r0_0 = __riscv_vfmul_vf_f32m1(A0, B0, 8);  // Column 0, rows 0-7
         vfloat32m1_t r0_1 = __riscv_vfmul_vf_f32m1(A1, B0, 8);  // Column 0, rows 8-15
-        // ... (r1_0, r1_1, ..., r7_0, r7_1 for columns 1-7)
-        
+        // ... (r1_0, r1_1, ..., r7_0, r7_1 for columns 1-7) 
         // Depth-wise accumulation over K dimension
         for (BLASLONG k = 1; k < K; k++) {
             // Load next tile of B (8 scalars)
-            B0 = B[8*k+0]; B1 = B[8*k+1]; ... B7 = B[8*k+7];
-            
+            B0 = B[8*k+0]; B1 = B[8*k+1]; ... B7 = B[8*k+7];    
             // Load next tile of A (2 vectors)
             A0 = __riscv_vle32_v_f32m1(&A[16*k + 0], 8);
-            A1 = __riscv_vle32_v_f32m1(&A[16*k + 8], 8);
-            
+            A1 = __riscv_vle32_v_f32m1(&A[16*k + 8], 8); 
             // Fused multiply-accumulate operations
             r0_0 = __riscv_vfmacc_vf_f32m1(r0_0, B0, A0, 8);
             r0_1 = __riscv_vfmacc_vf_f32m1(r0_1, B0, A1, 8);
