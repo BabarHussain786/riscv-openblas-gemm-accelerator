@@ -1,25 +1,4 @@
-//RVV SGEMM: 16×8 block (LMUL=1, VLEN=256) 
-for (j in N/8) {
-  for (i in M/16) {
-    // Load 16 A rows (2 vectors), 8 B scalars
-    A0 = vle32(A[0:8]);   // Rows 0-7
-    A1 = vle32(A[8:16]);  // Rows 8-15
-    B0-7 = B[0:8];        // 8 columns
-    
-    // 16 accumulators (8 cols × 2 vecs)
-    r0_0-7_0 = vfmul(A0, B0-7);
-    r0_1-7_1 = vfmul(A1, B0-7);
-    
-    // K-accumulation
-    for (k = 1; k < K; k++) {
-      A0 = vle32(A[k*16 + 0:8]);
-      A1 = vle32(A[k*16 + 8:16]);
-      B0-7 = B[k*8 + 0:8];
-      
-      // FMA updates
-      r0_0-7_0 = vfmacc(r0_0-7_0, B0-7, A0);
-      r0_1-7_1 = vfmacc(r0_1-7_1, B0-7, A1);
-    }}}
+
 
 
 **Baseline Kernel — File Description**
