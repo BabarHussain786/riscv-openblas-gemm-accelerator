@@ -1,5 +1,22 @@
+Kernel: Computes C += α·A·B once (single multiplication).
 
+Benchmark Driver: Calls kernel multiple times for timing/accuracy:
 
+Controls iterations (repeats for timing)
+
+Handles memory allocation/initialization
+
+Measures execution time
+
+Calculates GFLOPS/GBs
+
+Performs correctness verification (optional)
+
+Simple analogy:
+
+Kernel = Worker doing one job
+
+Benchmark Driver = Manager timing worker doing same job N times
 
 **Baseline Kernel — File Description**
 
