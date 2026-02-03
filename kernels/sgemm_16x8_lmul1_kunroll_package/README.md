@@ -1,4 +1,4 @@
-# Option 1 package — LMUL=1 K-unroll=2 (same structure)
+#  LMUL=1 K-unroll=2 (same structure)
 
 This package contains an **unrolled-by-2 in the K loop** version of your `16x8` RVV SGEMM micro-kernel.
 
