@@ -43,12 +43,6 @@ SUMMARY
   ------------------------------------
   TOTAL LIVE        : 18 / 32 registers
 
-RESULT
-------
-  ✔ Fits at LMUL = 1
-  ✔ No register spills
-  ✔ Full vector-lane utilization
-  ✔ Compute-bound inner K loop
 </pre>
 
 
