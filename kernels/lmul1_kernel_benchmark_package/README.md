@@ -1,20 +1,30 @@
 <pre>
-RVV Register Usage (Main 16x8 SGEMM Block, LMUL=1)
-VLEN=256 bits => VL=8 FP32 lanes (m1)
+Vector Register Usage (RVV SGEMM 16x8 Micro-kernel, LMUL=1)
+--------------------------------------------------------
 
-A vectors:
-  A0 (rows 0..7)   : vfloat32m1
-  A1 (rows 8..15)  : vfloat32m1
+Vector length:
+  VLEN = 256 bits  ->  8 FP32 lanes per vector (vfloat32m1)
 
-Accumulators (8 columns x 2 halves = 16 vectors):
-  Top half (rows 0..7):
+A operand vectors:
+  A0 : rows  0..7   (vfloat32m1)
+  A1 : rows  8..15  (vfloat32m1)
+
+Accumulator vectors (C = A x B):
+  Columns = 8, Rows = 16 (split into two halves)
+
+  Top half  (rows  0..7):
     r0_0  r1_0  r2_0  r3_0  r4_0  r5_0  r6_0  r7_0
+
   Bottom half (rows 8..15):
     r0_1  r1_1  r2_1  r3_1  r4_1  r5_1  r6_1  r7_1
 
-Live vector count:
-  2 (A) + 16 (accumulators) = 18 vectors  => fits, no spills
+Register pressure summary:
+  A vectors        : 2
+  Accumulator vecs : 16
+  --------------------------------
+  Total live vecs  : 18 (fits, no spills)
 </pre>
+
 
 **Baseline Kernel — File Description**
 
