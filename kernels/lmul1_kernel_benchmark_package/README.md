@@ -29,35 +29,35 @@ VLEN = 256 bits → 8 FP32 lanes per vector
 
 A operand vectors (rows of A):
 
-  ┌──────────────────┐
-  │ A0 : rows  0 –  7 │   vfloat32m1
-  └──────────────────┘
++------------------+
+| A0 : rows  0– 7  |   vfloat32m1
++------------------+
 
-  ┌──────────────────┐
-  │ A1 : rows  8 – 15 │   vfloat32m1
-  └──────────────────┘
-
-
-Accumulator vectors (C = A × B, 8 columns):
-
-Rows 0–7 (top half, vector lanes fully active)
-  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-  │ r0_0 │ │ r1_0 │ │ r2_0 │ │ r3_0 │ │ r4_0 │ │ r5_0 │ │ r6_0 │ │ r7_0 │
-  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
++------------------+
+| A1 : rows  8–15  |   vfloat32m1
++------------------+
 
 
-Rows 8–15 (bottom half, vector lanes fully active)
-  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-  │ r0_1 │ │ r1_1 │ │ r2_1 │ │ r3_1 │ │ r4_1 │ │ r5_1 │ │ r6_1 │ │ r7_1 │
-  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
+Accumulator vectors (C = A × B, 8 columns)
 
+Rows 0–7 (top half)
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------+
+| r0_0 | | r1_0 | | r2_0 | | r3_0 | | r4_0 | | r5_0 | | r6_0 | | r7_0 |
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------+
+
+Rows 8–15 (bottom half)
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------+
+| r0_1 | | r1_1 | | r2_1 | | r3_1 | | r4_1 | | r5_1 | | r6_1 | | r7_1 |
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------+
 
 Summary:
-- A vectors        : 2 (A0, A1)
-- Accumulator vecs : 16 (8 columns × 2 row blocks)
+- A vectors        : 2
+- Accumulator vecs : 16
 - Total live vecs  : 18
-- LMUL = 1 → fits in RVV register file (no spills)
-- Result           : full vector-lane utilization in main loop
+- LMUL = 1 → no register spills
+
+
+
 
 
 
