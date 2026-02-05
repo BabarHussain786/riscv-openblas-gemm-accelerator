@@ -1,28 +1,54 @@
 <pre>
-Vector Register Usage (RVV SGEMM 16x8 Micro-kernel, LMUL=1)
---------------------------------------------------------
+Vector Register Pressure Map (RVV SGEMM 16x8, LMUL=1)
+===================================================
 
-Vector length:
-  VLEN = 256 bits  ->  8 FP32 lanes per vector (vfloat32m1)
+Each box = 1 vector register (vfloat32m1, VL=8 FP32 lanes)
+Total registers available: 32
 
-A operand vectors:
-  A0 : rows  0..7   (vfloat32m1)
-  A1 : rows  8..15  (vfloat32m1)
+┌──────────────────────── A OPERANDS ────────────────────────┐
+│  ┌──────────┐    ┌──────────┐                              │
+│  │   A0     │    │   A1     │                              │
+│  │ rows 0-7 │    │ rows 8-15│                              │
+│  └──────────┘    └──────────┘                              │
+│        2 vector registers                                  │
+└────────────────────────────────────────────────────────────┘
 
-Accumulator vectors (C = A x B):
-  Columns = 8, Rows = 16 (split into two halves)
 
-  Top half  (rows  0..7):
-    r0_0  r1_0  r2_0  r3_0  r4_0  r5_0  r6_0  r7_0
+┌──────────────────── ACCUMULATORS (MAIN PRESSURE) ───────────────────┐
+│                                                                      │
+│  Top half (rows 0-7):                                                │
+│    ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
+│    │ r0_0 │ │ r1_0 │ │ r2_0 │ │ r3_0 │ │ r4_0 │ │ r5_0 │ │ r6_0 │ │ r7_0 │
+│    └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
+│                                                                      │
+│  Bottom half (rows 8-15):                                             │
+│    ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
+│    │ r0_1 │ │ r1_1 │ │ r2_1 │ │ r3_1 │ │ r4_1 │ │ r5_1 │ │ r6_1 │ │ r7_1 │
+│    └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
+│                                                                      │
+│        16 vector registers (dominant pressure)                       │
+└──────────────────────────────────────────────────────────────────────┘
 
-  Bottom half (rows 8..15):
-    r0_1  r1_1  r2_1  r3_1  r4_1  r5_1  r6_1  r7_1
 
-Register pressure summary:
-  A vectors        : 2
-  Accumulator vecs : 16
-  --------------------------------
-  Total live vecs  : 18 (fits, no spills)
+┌──────────────────────── SCALAR OPERANDS ────────────────────────────┐
+│  B0 ... B7 loaded as FP32 scalars                                   │
+│  (no vector registers consumed)                                     │
+└──────────────────────────────────────────────────────────────────────┘
+
+
+SUMMARY
+-------
+  A operands        :  2 vector registers
+  Accumulators      : 16 vector registers
+  ------------------------------------
+  TOTAL LIVE        : 18 / 32 registers
+
+RESULT
+------
+  ✔ Fits at LMUL = 1
+  ✔ No register spills
+  ✔ Full vector-lane utilization
+  ✔ Compute-bound inner K loop
 </pre>
 
 
