@@ -21,6 +21,30 @@
 | Memory pattern       | Reuse A vectors, scalar B    | Optimized for cache                    |
 | Role                 | **Reference / baseline**     | Comparison point for LMUL scaling      |
 
+
+How your kernel uses vector registers (LMUL = 1)
+VLEN = 256 bits  →  8 FP32 values per vector
+
+Registers in use (main 16×8 block)
+
+A vectors:
+ ┌──────────────┐
+ │ A0 (rows 0–7)│  → vfloat32m1
+ └──────────────┘
+ ┌──────────────┐
+ │ A1 (rows 8–15)│ → vfloat32m1
+ └──────────────┘
+
+Accumulator vectors (C = A×B):
+ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐
+ │r0_0│ │r1_0│ │r2_0│ │r3_0│ │r4_0│ │r5_0│ │r6_0│ │r7_0│  ← rows 0–7
+ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘
+
+ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐
+ │r0_1│ │r1_1│ │r2_1│ │r3_1│ │r4_1│ │r5_1│ │r6_1│ │r7_1│  ← rows 8–15
+ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘
+
+
 The LMUL=1 kernel is the baseline 16×8 micro-kernel that uses smaller vectors and more instructions, serving as the reference for all LMUL optimizations.
 
 | rank | label          | M     | N     | K    | samples | mean_gflops | mean_time | rel_to_mean |
