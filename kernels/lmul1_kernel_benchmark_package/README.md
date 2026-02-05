@@ -1,122 +1,131 @@
 <pre>
-RVV SGEMM 16x8 MICRO-KERNEL — COMPLETE VIEW (LMUL=1)
-===================================================
+RVV SGEMM 16×8 MICRO-KERNEL — COMPLETE TASK DIAGRAM (LMUL = 1)
+=============================================================
 
-Target:
-  VLEN = 256 bits  ->  VL = 8 FP32 lanes (vfloat32m1)
-  Vector registers available = 32
+Target configuration (TASK: define execution model)
+--------------------------------------------------
+VLEN = 256 bits  →  VL = 8 FP32 lanes (vfloat32m1)
+Vector registers = 32
+LMUL = 1         →  1 vector register per vector
 
 
 (1) LOOP-NEST STRUCTURE
-----------------------
-for j = 0 .. N/8-1        // N panels (8 columns)
- └─ for i = 0 .. M/16-1   // M blocks (16 rows)
-     └─ for k = 0 .. K-1  // reduction (inner loop)
-         -> vector FMAs
+TASK: control computation order and data reuse
+----------------------------------------------
+for j = 0 .. (N/8)-1          // iterate over column panels
+ └─ for i = 0 .. (M/16)-1     // iterate over row blocks
+     └─ for k = 0 .. K-1      // reduction loop
+         -> vector FMAs (compute-intensive)
 
 
-(2) MICRO-KERNEL BLOCKING (16x8)
---------------------------------
-C block updated per (i,j):
+(2) MICRO-KERNEL BLOCKING (16 × 8)
+TASK: maximize vector utilization and reuse
+--------------------------------------------
+C sub-block updated per (i, j):
 
-        Columns ->
+        Columns →
       +----+----+----+----+----+----+----+----+
 Rows  | c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 |
       +----+----+----+----+----+----+----+----+
- 0-7  | r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0 |
- 8-15 | r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1 |
+ 0–7  | r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0 |
+ 8–15 | r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1 |
 
-A block : A[16 x K] -> loaded as two vectors (A0, A1)
-B block : B[K x 8]  -> loaded as scalars (B0..B7)
+TASK:
+- Use 2 vectors to cover 16 rows
+- Reuse each B scalar across 16 rows
+- Accumulate results in vector registers
 
 
 (3) DATAFLOW (PER K ITERATION)
-------------------------------
-A vectors (vector loads):
-  A0 (rows 0..7)    A1 (rows 8..15)
-       |                  |
-       v                  v
-     vA0                vA1
-       \__________________/
-                |
-                |  scalar broadcast
-                v
-B scalars:
-  B0 B1 B2 B3 B4 B5 B6 B7
+TASK: describe how operands move and interact
+----------------------------------------------
+Vector loads (A):
+  A0 (rows 0–7)        A1 (rows 8–15)
+       |                    |
+       v                    v
+     vA0                  vA1
+       \____________________/
+                 |
+                 | scalar broadcast
+                 v
+Scalar loads (B):
+  B0  B1  B2  B3  B4  B5  B6  B7
+
+TASK:
+- Load A as vectors
+- Load B as scalars
+- Perform vector FMA updates
 
 Accumulator updates:
-  Top half (rows 0..7):
-    rj_0 = rj_0 + A0 * Bj   for j = 0..7
-  Bottom half (rows 8..15):
-    rj_1 = rj_1 + A1 * Bj   for j = 0..7
+  rj_0 ← rj_0 + A0 × Bj   (rows 0–7)
+  rj_1 ← rj_1 + A1 × Bj   (rows 8–15)
 
 After K loop:
-  C[rows 0..7 , col j]  += alpha * rj_0
-  C[rows 8..15, col j]  += alpha * rj_1
+  C ← C + α × (A × B)
 
 
-(4) VECTOR REGISTER PRESSURE MAP
---------------------------------
-Each item = 1 vector register (LMUL=1)
+(4) VECTOR REGISTER PRESSURE
+TASK: fit computation within register file
+-------------------------------------------
+Each item = 1 vector register (LMUL = 1)
 
 A operands (low pressure):
-  A0 (rows 0..7)
-  A1 (rows 8..15)
-  -> 2 vector registers
+  A0, A1  → 2 registers
 
 Accumulators (dominant pressure):
-  Top half:
-    r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0
-  Bottom half:
-    r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1
-  -> 16 vector registers
+  r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0
+  r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1
+  → 16 registers
 
 B operands:
-  Loaded as FP32 scalars (no vector registers)
+  Scalars only → 0 vector registers
 
-TOTAL LIVE VECTOR REGISTERS:
-  2 (A) + 16 (accumulators) = 18 / 32
-  -> Fits, no spills
+TASK RESULT:
+  Total live = 18 / 32 registers
+  → No register spilling
 
 
 (5) REGISTER LIFETIME (INSIDE K LOOP)
--------------------------------------
-Time ->
-k=0      k=1      k=2        ...      k=K-1
+TASK: explain register pressure dominance
+-----------------------------------------
+Time →
+k=0      k=1      k=2        …        k=K−1
 
-A0,A1 : [load]  [load]  [load]  ...  [load]     (short-lived)
-B*    : [load]  [load]  [load]  ...  [load]     (scalar)
+A0,A1 : [load]  [load]  [load]  …  [load]   (short-lived)
+B*    : [load]  [load]  [load]  …  [load]   (scalar)
 
 r*_0,
-r*_1 : [init]===============================[final] (long-lived)
+r*_1  : [init]================================[final] (long-lived)
+
+TASK RESULT:
+- Accumulators dominate register lifetime
+- Explains high register pressure from C
 
 
-(6) TAIL-HANDLING (CORRECTNESS)
--------------------------------
+(6) TAIL HANDLING
+TASK: guarantee correctness for all sizes
+-----------------------------------------
 M dimension:
-  M >= 16 -> main vector kernel
-  M & 8   -> vector (VL=8)
-  M & 4   -> vector (VL=4)
-  M & 2   -> scalar
-  M & 1   -> scalar
+  M ≥ 16 → main vector kernel
+  M & 8  → vector (VL=8)
+  M & 4  → vector (VL=4)
+  M & 2  → scalar
+  M & 1  → scalar
 
 N dimension:
-  N >= 8 -> main kernel
-  N & 4  -> reduced vector kernel
-  N & 2  -> reduced vector kernel
-  N & 1  -> vector/scalar kernel
+  N ≥ 8 → main kernel
+  N & 4 → reduced vector kernel
+  N & 2 → reduced vector kernel
+  N & 1 → vector/scalar kernel
 
 
-SUMMARY
--------
-- Vectorization occurs only in inner K loop
-- Accumulators dominate register pressure
-- LMUL=1 avoids register spilling
-- Kernel is compute-bound and fully vector-utilized
-- Explicit tails ensure correctness for all M,N
+OVERALL TASK SUMMARY
+--------------------
+- Achieve full vector utilization
+- Avoid register spilling (LMUL = 1)
+- Keep kernel compute-bound
+- Ensure correctness for all M, N, K
 </pre>
-
-
 
 **Baseline Kernel — File Description**
 
