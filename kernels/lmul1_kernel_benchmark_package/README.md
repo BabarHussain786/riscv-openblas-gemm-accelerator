@@ -1,166 +1,119 @@
 <pre>
-Vector Register Pressure Map (RVV SGEMM 16x8, LMUL=1)
+RVV SGEMM 16x8 MICRO-KERNEL — COMPLETE VIEW (LMUL=1)
 ===================================================
 
-Each box = 1 vector register (vfloat32m1, VL=8 FP32 lanes)
-Total registers available: 32
-
-┌──────────────────────── A OPERANDS ────────────────────────┐
-│  ┌──────────┐    ┌──────────┐                              │
-│  │   A0     │    │   A1     │                              │
-│  │ rows 0-7 │    │ rows 8-15│                              │
-│  └──────────┘    └──────────┘                              │
-│        2 vector registers                                  │
-└────────────────────────────────────────────────────────────┘
+Target:
+  VLEN = 256 bits  ->  VL = 8 FP32 lanes (vfloat32m1)
+  Vector registers available = 32
 
 
-┌──────────────────── ACCUMULATORS (MAIN PRESSURE) ───────────────────┐
-│                                                                      │
-│  Top half (rows 0-7):                                                │
-│    ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-│    │ r0_0 │ │ r1_0 │ │ r2_0 │ │ r3_0 │ │ r4_0 │ │ r5_0 │ │ r6_0 │ │ r7_0 │
-│    └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
-│                                                                      │
-│  Bottom half (rows 8-15):                                             │
-│    ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-│    │ r0_1 │ │ r1_1 │ │ r2_1 │ │ r3_1 │ │ r4_1 │ │ r5_1 │ │ r6_1 │ │ r7_1 │
-│    └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘
-│                                                                      │
-│        16 vector registers (dominant pressure)                       │
-└──────────────────────────────────────────────────────────────────────┘
-
-
-┌──────────────────────── SCALAR OPERANDS ────────────────────────────┐
-│  B0 ... B7 loaded as FP32 scalars                                   │
-│  (no vector registers consumed)                                     │
-└──────────────────────────────────────────────────────────────────────┘
-
-
-SUMMARY
--------
-  A operands        :  2 vector registers
-  Accumulators      : 16 vector registers
-  ------------------------------------
-  TOTAL LIVE        : 18 / 32 registers
-
-</pre>
-
-<pre>
-Dataflow Diagram: C[16x8] += A[16xK] x B[Kx8]
-================================================
-
-Vector length: 8 FP32 lanes (vfloat32m1)
-
-For each K iteration:
-
-            A matrix (vector loads)
-            -----------------------
-            A0 (rows 0..7)   A1 (rows 8..15)
-                 │                 │
-                 │                 │
-                 ▼                 ▼
-           ┌──────────┐     ┌──────────┐
-           │ vA0      │     │ vA1      │
-           │ (8 lanes)│     │ (8 lanes)│
-           └──────────┘     └──────────┘
-                 │                 │
-                 │                 │
-                 └──────┬──────────┘
-                        │
-                        │   scalar broadcast
-                        ▼
-B matrix (scalar loads) -------------------------
-  B0  B1  B2  B3  B4  B5  B6  B7   (FP32 scalars)
-   │   │   │   │   │   │   │   │
-   ▼   ▼   ▼   ▼   ▼   ▼   ▼   ▼
-
-Accumulator vectors (live across full K loop)
-----------------------------------------------
-
- Top half (rows 0..7):
-   r0_0 = r0_0 + A0 * B0    r1_0 = r1_0 + A0 * B1  ...  r7_0 = r7_0 + A0 * B7
-
- Bottom half (rows 8..15):
-   r0_1 = r0_1 + A1 * B0    r1_1 = r1_1 + A1 * B1  ...  r7_1 = r7_1 + A1 * B7
-
-
-After K loop completes:
------------------------
-  Accumulators are scaled by alpha and written back to C:
-
-    C[rows 0..7 , col j]  += alpha * rj_0
-    C[rows 8..15, col j]  += alpha * rj_1
-
-
-Key properties:
----------------
-- A loaded as vectors (2 vector loads per K)
-- B loaded as scalars (8 scalar loads per K)
-- 16 vector FMAs per K iteration
-- Accumulators stay live for entire K loop
-</pre>
-
-<pre>
-Combined Kernel View (Diagrams 2–5): RVV SGEMM 16x8, LMUL=1
-================================================================
-
-(2) LOOP-NEST STRUCTURE
+(1) LOOP-NEST STRUCTURE
 ----------------------
-for j = 0 .. N/8-1        // N panels (8 columns each)
- └─ for i = 0 .. M/16-1   // M blocks (16 rows each)
-     └─ for k = 0 .. K-1  // reduction (inner, compute-heavy)
-         → vector FMAs
+for j = 0 .. N/8-1        // N panels (8 columns)
+ └─ for i = 0 .. M/16-1   // M blocks (16 rows)
+     └─ for k = 0 .. K-1  // reduction (inner loop)
+         -> vector FMAs
 
 
-(4) MICRO-KERNEL BLOCKING VIEW
-------------------------------
-C block (16x8) updated per (i,j):
+(2) MICRO-KERNEL BLOCKING (16x8)
+--------------------------------
+C block updated per (i,j):
 
-        Columns →
+        Columns ->
       +----+----+----+----+----+----+----+----+
 Rows  | c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 |
-↓     +----+----+----+----+----+----+----+----+
+      +----+----+----+----+----+----+----+----+
  0-7  | r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0 |
  8-15 | r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1 |
 
-A block : A[16 x K]  → loaded as two vectors (A0, A1)
-B block : B[K x 8]   → loaded as scalars (B0..B7)
+A block : A[16 x K] -> loaded as two vectors (A0, A1)
+B block : B[K x 8]  -> loaded as scalars (B0..B7)
 
 
-(3) REGISTER LIFETIME (inside K loop)
+(3) DATAFLOW (PER K ITERATION)
+------------------------------
+A vectors (vector loads):
+  A0 (rows 0..7)    A1 (rows 8..15)
+       |                  |
+       v                  v
+     vA0                vA1
+       \__________________/
+                |
+                |  scalar broadcast
+                v
+B scalars:
+  B0 B1 B2 B3 B4 B5 B6 B7
+
+Accumulator updates:
+  Top half (rows 0..7):
+    rj_0 = rj_0 + A0 * Bj   for j = 0..7
+  Bottom half (rows 8..15):
+    rj_1 = rj_1 + A1 * Bj   for j = 0..7
+
+After K loop:
+  C[rows 0..7 , col j]  += alpha * rj_0
+  C[rows 8..15, col j]  += alpha * rj_1
+
+
+(4) VECTOR REGISTER PRESSURE MAP
+--------------------------------
+Each item = 1 vector register (LMUL=1)
+
+A operands (low pressure):
+  A0 (rows 0..7)
+  A1 (rows 8..15)
+  -> 2 vector registers
+
+Accumulators (dominant pressure):
+  Top half:
+    r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0
+  Bottom half:
+    r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1
+  -> 16 vector registers
+
+B operands:
+  Loaded as FP32 scalars (no vector registers)
+
+TOTAL LIVE VECTOR REGISTERS:
+  2 (A) + 16 (accumulators) = 18 / 32
+  -> Fits, no spills
+
+
+(5) REGISTER LIFETIME (INSIDE K LOOP)
 -------------------------------------
-Time →
-k=0        k=1        k=2        ...        k=K-1
+Time ->
+k=0      k=1      k=2        ...      k=K-1
 
-A0,A1 :  [ load ] [ load ] [ load ] ... [ load ]   (short-lived)
-B*    :  [ load ] [ load ] [ load ] ... [ load ]   (scalar, short-lived)
+A0,A1 : [load]  [load]  [load]  ...  [load]     (short-lived)
+B*    : [load]  [load]  [load]  ...  [load]     (scalar)
 
 r*_0,
-r*_1 :  [ init ]===============================[ final ]  (long-lived)
+r*_1 : [init]===============================[final] (long-lived)
 
 
-(5) TAIL-HANDLING DECISION TREE
+(6) TAIL-HANDLING (CORRECTNESS)
 -------------------------------
 M dimension:
-  if M >= 16 → main vector kernel
-  else if M & 8 → vector (VL=8)
-  else if M & 4 → vector (VL=4)
-  else if M & 2 → scalar
-  else if M & 1 → scalar
+  M >= 16 -> main vector kernel
+  M & 8   -> vector (VL=8)
+  M & 4   -> vector (VL=4)
+  M & 2   -> scalar
+  M & 1   -> scalar
 
 N dimension:
-  if N >= 8 → main kernel
-  else if N & 4 → reduced vector kernel
-  else if N & 2 → reduced vector kernel
-  else if N & 1 → vector/scalar kernel
+  N >= 8 -> main kernel
+  N & 4  -> reduced vector kernel
+  N & 2  -> reduced vector kernel
+  N & 1  -> vector/scalar kernel
 
 
 SUMMARY
 -------
-- Vectorization happens only in inner K loop
-- Accumulators live across entire K loop
-- Blocking fixed at 16x8 for peak reuse
-- Tails handled explicitly for correctness
+- Vectorization occurs only in inner K loop
+- Accumulators dominate register pressure
+- LMUL=1 avoids register spilling
+- Kernel is compute-bound and fully vector-utilized
+- Explicit tails ensure correctness for all M,N
 </pre>
 
 
