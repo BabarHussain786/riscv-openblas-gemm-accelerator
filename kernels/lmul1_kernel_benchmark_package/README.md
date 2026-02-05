@@ -45,6 +45,60 @@ SUMMARY
 
 </pre>
 
+<pre>
+Dataflow Diagram: C[16x8] += A[16xK] x B[Kx8]
+================================================
+
+Vector length: 8 FP32 lanes (vfloat32m1)
+
+For each K iteration:
+
+            A matrix (vector loads)
+            -----------------------
+            A0 (rows 0..7)   A1 (rows 8..15)
+                 │                 │
+                 │                 │
+                 ▼                 ▼
+           ┌──────────┐     ┌──────────┐
+           │ vA0      │     │ vA1      │
+           │ (8 lanes)│     │ (8 lanes)│
+           └──────────┘     └──────────┘
+                 │                 │
+                 │                 │
+                 └──────┬──────────┘
+                        │
+                        │   scalar broadcast
+                        ▼
+B matrix (scalar loads) -------------------------
+  B0  B1  B2  B3  B4  B5  B6  B7   (FP32 scalars)
+   │   │   │   │   │   │   │   │
+   ▼   ▼   ▼   ▼   ▼   ▼   ▼   ▼
+
+Accumulator vectors (live across full K loop)
+----------------------------------------------
+
+ Top half (rows 0..7):
+   r0_0 = r0_0 + A0 * B0    r1_0 = r1_0 + A0 * B1  ...  r7_0 = r7_0 + A0 * B7
+
+ Bottom half (rows 8..15):
+   r0_1 = r0_1 + A1 * B0    r1_1 = r1_1 + A1 * B1  ...  r7_1 = r7_1 + A1 * B7
+
+
+After K loop completes:
+-----------------------
+  Accumulators are scaled by alpha and written back to C:
+
+    C[rows 0..7 , col j]  += alpha * rj_0
+    C[rows 8..15, col j]  += alpha * rj_1
+
+
+Key properties:
+---------------
+- A loaded as vectors (2 vector loads per K)
+- B loaded as scalars (8 scalar loads per K)
+- 16 vector FMAs per K iteration
+- Accumulators stay live for entire K loop
+</pre>
 
 **Baseline Kernel — File Description**
 
