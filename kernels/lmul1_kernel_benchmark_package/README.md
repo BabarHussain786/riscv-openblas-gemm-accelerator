@@ -1,3 +1,21 @@
+<pre>
+RVV Register Usage (Main 16x8 SGEMM Block, LMUL=1)
+VLEN=256 bits => VL=8 FP32 lanes (m1)
+
+A vectors:
+  A0 (rows 0..7)   : vfloat32m1
+  A1 (rows 8..15)  : vfloat32m1
+
+Accumulators (8 columns x 2 halves = 16 vectors):
+  Top half (rows 0..7):
+    r0_0  r1_0  r2_0  r3_0  r4_0  r5_0  r6_0  r7_0
+  Bottom half (rows 8..15):
+    r0_1  r1_1  r2_1  r3_1  r4_1  r5_1  r6_1  r7_1
+
+Live vector count:
+  2 (A) + 16 (accumulators) = 18 vectors  => fits, no spills
+</pre>
+
 **Baseline Kernel — File Description**
 
 | File                                                     | Description                                                                                                                                                                                                                                                |
@@ -21,24 +39,6 @@
 | Memory pattern       | Reuse A vectors, scalar B    | Optimized for cache                    |
 | Role                 | **Reference / baseline**     | Comparison point for LMUL scaling      |
 
-
-<pre>
-RVV Register Usage (Main 16x8 SGEMM Block, LMUL=1)
-VLEN=256 bits => VL=8 FP32 lanes (m1)
-
-A vectors:
-  A0 (rows 0..7)   : vfloat32m1
-  A1 (rows 8..15)  : vfloat32m1
-
-Accumulators (8 columns x 2 halves = 16 vectors):
-  Top half (rows 0..7):
-    r0_0  r1_0  r2_0  r3_0  r4_0  r5_0  r6_0  r7_0
-  Bottom half (rows 8..15):
-    r0_1  r1_1  r2_1  r3_1  r4_1  r5_1  r6_1  r7_1
-
-Live vector count:
-  2 (A) + 16 (accumulators) = 18 vectors  => fits, no spills
-</pre>
 
 The LMUL=1 kernel is the baseline 16×8 micro-kernel that uses smaller vectors and more instructions, serving as the reference for all LMUL optimizations.
 
