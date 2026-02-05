@@ -100,6 +100,71 @@ Key properties:
 - Accumulators stay live for entire K loop
 </pre>
 
+<pre>
+Combined Kernel View (Diagrams 2–5): RVV SGEMM 16x8, LMUL=1
+================================================================
+
+(2) LOOP-NEST STRUCTURE
+----------------------
+for j = 0 .. N/8-1        // N panels (8 columns each)
+ └─ for i = 0 .. M/16-1   // M blocks (16 rows each)
+     └─ for k = 0 .. K-1  // reduction (inner, compute-heavy)
+         → vector FMAs
+
+
+(4) MICRO-KERNEL BLOCKING VIEW
+------------------------------
+C block (16x8) updated per (i,j):
+
+        Columns →
+      +----+----+----+----+----+----+----+----+
+Rows  | c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 |
+↓     +----+----+----+----+----+----+----+----+
+ 0-7  | r0_0 r1_0 r2_0 r3_0 r4_0 r5_0 r6_0 r7_0 |
+ 8-15 | r0_1 r1_1 r2_1 r3_1 r4_1 r5_1 r6_1 r7_1 |
+
+A block : A[16 x K]  → loaded as two vectors (A0, A1)
+B block : B[K x 8]   → loaded as scalars (B0..B7)
+
+
+(3) REGISTER LIFETIME (inside K loop)
+-------------------------------------
+Time →
+k=0        k=1        k=2        ...        k=K-1
+
+A0,A1 :  [ load ] [ load ] [ load ] ... [ load ]   (short-lived)
+B*    :  [ load ] [ load ] [ load ] ... [ load ]   (scalar, short-lived)
+
+r*_0,
+r*_1 :  [ init ]===============================[ final ]  (long-lived)
+
+
+(5) TAIL-HANDLING DECISION TREE
+-------------------------------
+M dimension:
+  if M >= 16 → main vector kernel
+  else if M & 8 → vector (VL=8)
+  else if M & 4 → vector (VL=4)
+  else if M & 2 → scalar
+  else if M & 1 → scalar
+
+N dimension:
+  if N >= 8 → main kernel
+  else if N & 4 → reduced vector kernel
+  else if N & 2 → reduced vector kernel
+  else if N & 1 → vector/scalar kernel
+
+
+SUMMARY
+-------
+- Vectorization happens only in inner K loop
+- Accumulators live across entire K loop
+- Blocking fixed at 16x8 for peak reuse
+- Tails handled explicitly for correctness
+</pre>
+
+
+
 **Baseline Kernel — File Description**
 
 | File                                                     | Description                                                                                                                                                                                                                                                |
