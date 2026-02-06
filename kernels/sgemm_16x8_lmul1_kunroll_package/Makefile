@@ -1,12 +1,30 @@
-CC ?= gcc
-CFLAGS ?= -O3 -std=c11 -Wall -Wextra
-# For BananaPi K1 / SpacemiT X60 with RVV:
-RVVFLAGS ?= -march=rv64gcv_zvl256b -mabi=lp64d
+# Makefile — SGEMM benchmark (LMUL=1, K-unroll×2)
 
-all: sgemm_kunroll2_bench
+CC      = gcc
+CFLAGS  = -O3 -march=rv64gcv_zvl256b -mabi=lp64d -std=c11 -Wall -Wextra
+LDFLAGS = -lm
 
-sgemm_kunroll2_bench: sgemm_kunroll2_bench.c sgemm_kernel_16x8_zvl256b_lmul1_kunroll2.c
-	$(CC) $(CFLAGS) $(RVVFLAGS) $^ -o $@
+TARGET    = sgemm_kunroll2_bench
+KERNEL    = sgemm_kernel_16x8_zvl256b_lmul1_kunroll2.c
+BENCHMARK = sgemm_kunroll2_bench.c
+
+.PHONY: all clean run help
+
+all: $(TARGET)
+
+$(TARGET): $(KERNEL) $(BENCHMARK)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo "✓ Built $@ (LMUL=1, K-unroll×2)"
 
 clean:
-	rm -f sgemm_kunroll2_bench
+	rm -f $(TARGET) *.o
+	@echo "✓ Cleaned"
+
+run: $(TARGET)
+	@./$(TARGET) 2048 2048 2048 30 0
+
+help:
+	@echo "K-UNROLL×2 BENCHMARK COMMANDS:"
+	@echo "  make        - Build"
+	@echo "  make run    - Quick test (2048³)"
+	@echo "  make clean  - Clean files"
