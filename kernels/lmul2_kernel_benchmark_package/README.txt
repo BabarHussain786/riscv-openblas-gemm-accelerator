@@ -4,6 +4,13 @@
 | **Load instructions**     | 2 instructions          | 1 instruction           |
 | **Vector width per load** | 256 bits (VLEN)         | 512 bits (2×VLEN)       |
 
+| Aspect                        | LMUL=1 | LMUL=2 |
+| ----------------------------- | ------ | ------ |
+| **Total bytes loaded from A** | Same   | Same   |
+| **Total bytes loaded from B** | Same   | Same   |
+| **Total bytes loaded from C** | Same   | Same   |
+| **Total bytes stored to C**   | Same   | Same   |
+
 
 | Aspect               | LMUL=2 Kernel (16×8)            | Reason / Meaning                       |
 | -------------------- | ------------------------------- | -------------------------------------- |
