@@ -1,3 +1,10 @@
+| Aspect                    | LMUL=1                  | LMUL=2                  |
+| ------------------------- | ----------------------- | ----------------------- |
+| **Bytes loaded (M=16)**   | 64 bytes (2 × 32 bytes) | 64 bytes (1 × 64 bytes) |
+| **Load instructions**     | 2 instructions          | 1 instruction           |
+| **Vector width per load** | 256 bits (VLEN)         | 512 bits (2×VLEN)       |
+
+
 | Aspect               | LMUL=2 Kernel (16×8)            | Reason / Meaning                       |
 | -------------------- | ------------------------------- | -------------------------------------- |
 | Kernel shape         | **16 × 8**                      | Computes 16 rows × 8 columns per block |
