@@ -1,0 +1,48 @@
+# Makefile for RISC-V DGEMM Benchmark (FP64)
+# Targets: dgemm_bench_8x8, clean, all
+
+CC = gcc
+CFLAGS = -O3 -march=rv64gcv_zvl256b -mabi=lp64d -std=c11 -Wall -Wextra
+LDFLAGS = -lm
+
+# Default architecture (override if needed)
+ARCH ?= rv64gcv_zvl256b
+CFLAGS += -march=$(ARCH)
+
+# Source files
+DGEMM_SRCS = dgemm_kernel_8x8_zvl256b.c dgemm_kernel_8x8_zvl256b_benchmark.c
+DGEMM_OBJS = $(DGEMM_SRCS:.c=.o)
+
+# Targets
+.PHONY: all clean help
+
+all: dgemm_bench_8x8
+
+# Main FP64 benchmark binary
+dgemm_bench_8x8: $(DGEMM_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@echo "✓ Built $@ for $(ARCH)"
+
+# Object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Clean
+clean:
+	rm -f dgemm_bench_8x8 *.o
+	@echo "✓ Cleaned build files"
+
+# Help
+help:
+	@echo "RISC-V DGEMM Benchmark (FP64) Makefile"
+	@echo ""
+	@echo "Targets:"
+	@echo "  make                    - Build dgemm_bench_8x8"
+	@echo "  make clean              - Remove build files"
+	@echo "  make help               - Show this help"
+	@echo ""
+	@echo "Environment:"
+	@echo "  ARCH=rv64gcv            - Set architecture (default: rv64gcv_zvl256b)"
+	@echo ""
+	@echo "Example:"
+	@echo "  make ARCH=rv64gcv"
