@@ -1,3 +1,20 @@
+| Aspect                       | **LMUL=1**          | **LMUL=2**                | **LMUL=4**          | **LMUL=8**                |
+| ---------------------------- | ------------------- | ------------------------- | ------------------- | ------------------------- |
+| Vector type                  | m1                  | m2                        | m4                  | m8                        |
+| FP32 lanes (VLEN=256)        | 8                   | 16                        | 32                  | 64                        |
+| Main block (M×N)             | 16×8                | 16×8                      | 32×4                | 64×2                      |
+| Algorithm change vs baseline | Baseline            | **Same as LMUL=1**        | Changed blocking    | Strongly changed blocking |
+| Accumulators kept live       | 8                   | 8                         | 4                   | 2                         |
+| Register pressure            | Low                 | Medium                    | High                | Very high                 |
+| N size reason                | Natural             | Natural                   | Reduced to fit regs | **Forced very small**     |
+| A reuse across N             | High                | High                      | Medium              | Low                       |
+| Tail handling                | Moderate            | Moderate                  | More complex        | Most complex              |
+| Compiler freedom             | High                | High                      | Medium              | Low                       |
+| Performance stability        | Stable              | **Very stable**           | Shape-dependent     | Unstable / niche          |
+| Typical use                  | Reference           | **Best practical kernel** | Experimental tuning | Architecture stress test  |
+| Why it exists                | Baseline comparison | Best LMUL upgrade         | Explore higher LMUL | Show LMUL limit effects   |
+
+
 | Aspect                    | **Baseline (LMUL=1)** | **This Kernel (LMUL=8)**                 |
 | ------------------------- | --------------------- | ---------------------------------------- |
 | LMUL                      | 1                     | **8**                                    |
