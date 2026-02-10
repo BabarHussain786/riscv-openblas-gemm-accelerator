@@ -1,13 +1,14 @@
-| Category (large case)  | Matrix / Sweep point | GFLOPS (min → max) | Time (min → max) sec | Interpretation                              |
-| ---------------------- | -------------------- | -----------------: | -------------------: | ------------------------------------------- |
-| Square (largest)       | **4096³**            |  **11.15 → 11.98** |    **11.48 → 12.33** | Near-peak, compute-bound and stable         |
-| FLOP-equivalent large  | **4096×4096×1024**   |  **10.45 → 11.22** |      **3.06 → 3.29** | High throughput, more sensitive than square |
-| Rectangular fixed-4096 | **4096×1024×4096**   |  **11.17 → 11.97** |      **2.87 → 3.07** | Best rectangular shape; consistently strong |
-| Tall-skinny (large)    | **16384×128×4096**   |  **11.18 → 11.97** |      **1.44 → 1.54** | Very strong; good reuse, low overhead       |
-| Short-wide (large)     | **64×32768×4096**    |   **9.82 → 10.88** |      **1.58 → 1.75** | Weaker due to memory / reuse limits         |
-| K-scaling (largest)    | **K=16384**          |  **11.01 → 11.82** |    **46.49 → 49.91** | Deep-K sustains high GFLOPS; long runtime   |
-| M-scaling (largest)    | **M=16384**          |  **11.19 → 11.98** |    **45.88 → 49.13** | Large-M maintains near-peak performance     |
-| N-scaling (largest)    | **N=16384**          |  **11.17 → 11.41** |    **48.19 → 49.21** | Very stable across cycles (good N behavior) |
+| Category          | Matrix Size    | Avg GFLOPS | Avg Time (s) | Consolidated Score (%) | Performance Characterization                                    |
+| ----------------- | -------------- | ---------: | -----------: | ---------------------: | --------------------------------------------------------------- |
+| Square            | 4096³          |      11.83 |        11.62 |               **96.9** | Strong compute-bound behavior; LMUL=2 improves peak utilization |
+| FLOP-Equivalent   | 4096×4096×1024 |      10.48 |         3.28 |               **83.5** | Lower B reuse; higher memory pressure reduces overall score     |
+| Rectangular       | 4096×1024×4096 |      11.45 |         3.00 |               **96.3** | Excellent memory access pattern; near-ideal balance             |
+| Tall-Skinny       | 32768×64×4096  |  **11.96** |     **1.44** |       **100.0 (Best)** | Best case overall; maximum vector reuse and cache efficiency    |
+| Short-Wide        | 64×32768×4096  |      10.88 |         1.58 |               **88.4** | Bandwidth pressure on B panels limits performance               |
+| K-Scaling (Large) | K = 16384      |      11.20 |        49.78 |               **82.6** | Reduction-heavy; long runtime penalizes consolidated score      |
+| M-Scaling (Large) | M = 16384      |      11.31 |        48.60 |               **83.6** | Stable performance; good tile reuse                             |
+| N-Scaling (Large) | N = 16384      |      11.34 |        48.48 |               **84.0** | Column-major layout favors kernel; best among scaling cases     |
+
 
 
 | Aspect                    | LMUL=1                  | LMUL=2                  |
