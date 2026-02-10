@@ -326,7 +326,6 @@ Host:   k1
 === 24-HOUR BENCHMARK SUMMARY (LMUL=2) ===
 Total samples: 296
 Total cycles:  8
-Average GFLOPS: 0.00
 
 
 [02-04 22:15:00] Benchmark COMPLETE!
@@ -336,3 +335,4 @@ Results saved to: 24h_results_lmul2_20260203_205011/
 Total cycles completed: 8
 
 =====================================================
+
