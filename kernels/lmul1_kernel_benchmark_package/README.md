@@ -1,3 +1,15 @@
+| Category              | Matrix Size    | Avg GFLOPS | Avg Time (s) | Stability (Across 8 Cycles) | Notes                                       |
+| --------------------- | -------------- | ---------: | -----------: | --------------------------- | ------------------------------------------- |
+| **Square**            | 4096³          |  **11.06** |    **12.41** | Very stable (±0.2 GFLOPS)   | Fully compute-bound, peak utilization       |
+| **FLOP-Equivalent**   | 4096×4096×1024 |       9.90 |         3.47 | Stable                      | Lower reuse of B, more memory pressure      |
+| **Rectangular**       | 4096×1024×4096 |  **11.12** |     **3.09** | Very stable                 | Best rectangular case, ideal access pattern |
+| **Tall-Skinny**       | 32768×64×4096  |  **11.11** |     **1.55** | Extremely stable            | Excellent vector reuse, cache-friendly      |
+| **Short-Wide**        | 64×32768×4096  |      10.35 |         1.63 | Moderate variation          | Bandwidth pressure on B                     |
+| **K-Scaling (Large)** | K = 16384      |  **11.08** |    **49.60** | Very stable                 | Strong reduction efficiency                 |
+| **M-Scaling (Large)** | M = 16384      |  **11.12** |    **49.48** | Very stable                 | Perfect tile reuse                          |
+| **N-Scaling (Large)** | N = 16384      |  **11.15** |    **49.40** | Very stable                 | Column-major layout favors kernel           |
+
+
 <pre>
 RVV SGEMM 16×8 MICRO-KERNEL — COMPLETE TASK DIAGRAM (LMUL = 1)
 =============================================================
