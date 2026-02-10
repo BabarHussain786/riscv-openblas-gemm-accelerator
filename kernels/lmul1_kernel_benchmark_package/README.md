@@ -1,13 +1,14 @@
-| Category              | Matrix Size    | Avg GFLOPS | Avg Time (s) | Stability (Across 8 Cycles) | Notes                                       |
-| --------------------- | -------------- | ---------: | -----------: | --------------------------- | ------------------------------------------- |
-| **Square**            | 4096³          |  **11.06** |    **12.41** | Very stable (±0.2 GFLOPS)   | Fully compute-bound, peak utilization       |
-| **FLOP-Equivalent**   | 4096×4096×1024 |       9.90 |         3.47 | Stable                      | Lower reuse of B, more memory pressure      |
-| **Rectangular**       | 4096×1024×4096 |  **11.12** |     **3.09** | Very stable                 | Best rectangular case, ideal access pattern |
-| **Tall-Skinny**       | 32768×64×4096  |  **11.11** |     **1.55** | Extremely stable            | Excellent vector reuse, cache-friendly      |
-| **Short-Wide**        | 64×32768×4096  |      10.35 |         1.63 | Moderate variation          | Bandwidth pressure on B                     |
-| **K-Scaling (Large)** | K = 16384      |  **11.08** |    **49.60** | Very stable                 | Strong reduction efficiency                 |
-| **M-Scaling (Large)** | M = 16384      |  **11.12** |    **49.48** | Very stable                 | Perfect tile reuse                          |
-| **N-Scaling (Large)** | N = 16384      |  **11.15** |    **49.40** | Very stable                 | Column-major layout favors kernel           |
+| Category          |  Matrix / Case | Avg GFLOPS | Avg Time (s) | GFLOPS norm (÷ max) | Time eff (min ÷ t) | Consolidated (%) |
+| ----------------- | -------------: | ---------: | -----------: | ------------------: | -----------------: | ---------------: |
+| Square            |          4096³ |      11.06 |        12.41 |               0.992 |              0.125 |            73.18 |
+| FLOP-Equivalent   | 4096×4096×1024 |       9.90 |         3.47 |               0.888 |              0.447 |            75.55 |
+| Rectangular       | 4096×1024×4096 |      11.12 |         3.09 |               0.997 |              0.502 |            84.86 |
+| Tall-Skinny       |  32768×64×4096 |      11.11 |         1.55 |               0.996 |              1.000 |            99.75 |
+| Short-Wide        |  64×32768×4096 |      10.35 |         1.63 |               0.928 |              0.951 |            93.51 |
+| K-Scaling (Large) |        K=16384 |      11.08 |        49.60 |               0.994 |              0.031 |            70.50 |
+| M-Scaling (Large) |        M=16384 |      11.12 |        49.48 |               0.997 |              0.031 |            70.75 |
+| N-Scaling (Large) |        N=16384 |      11.15 |        49.40 |               1.000 |              0.031 |            70.94 |
+
 
 
 <pre>
