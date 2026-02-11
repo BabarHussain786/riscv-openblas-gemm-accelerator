@@ -10,6 +10,41 @@
 | N-Scaling (Large) |        N=16384 |      11.15 |        49.40 |               1.000 |              0.031 |            70.94 |
 
 
+24-Hour Benchmark Methodology (LMUL = 1)
+
+This benchmark evaluates the LMUL=1 RVV SGEMM micro-kernel (16×8 FP32) under long, sustained execution to obtain stable and statistically reliable performance metrics.
+
+🔹 What runs for 24 hours?
+
+The benchmark repeatedly executes a fixed set of representative matrix sizes in a loop called a cycle.
+Each cycle runs the same test cases once, then the next cycle starts immediately.
+
+Total runtime target: ~24 hours
+Total completed cycles: recorded in the benchmark log
+Each cycle includes:
+Square matrix (4096³)
+FLOP-equivalent matrix (4096×4096×1024)
+Rectangular matrix (4096×1024×4096)
+Scaling tests (K, M, N variants)
+This repetition ensures results are not biased by transient system effects such as warm-up behavior, cache state changes, or operating system noise.
+
+🔹 How performance is measured
+
+For each test case in every cycle:
+Execution time is measured using a monotonic high-resolution timer
+GFLOPS is computed as:
+GFLOPS = (2 × M × N × K) / execution_time
+Results (GFLOPS and execution time) are logged per cycle.
+
+After the 24-hour run:
+All cycles are aggregated
+Average GFLOPS and average execution time are computed across cycles
+Variability is checked to confirm performance stability
+
+🔹 Why 24 hours?
+This is especially important for RISC-V RVV kernels, where vector length, LMUL configuration, and memory pressure interact over time.
+Long-duration execution ensures that the reported results reflect sustained kernel behavior, not short-term or best-case performance.
+
 
 <pre>
 RVV SGEMM 16×8 MICRO-KERNEL — COMPLETE TASK DIAGRAM (LMUL = 1)
