@@ -52,3 +52,19 @@ Variability is checked to confirm stability
 🔹 Why 24 hours?
 This is especially important for RISC-V RVV kernels, where vector length, LMUL, and memory pressure interact over time.
 
+
+| Aspect                        | **Baseline (LMUL=1)** | **LMUL=2**               | **K-Unroll (×2)**          | **LMUL=4**                    |
+| ----------------------------- | --------------------- | ------------------------ | -------------------------- | ----------------------------- |
+| **Kernel shape**              | 16×8 micro-kernel     | 16×8 micro-kernel        | 16×8 micro-kernel          | **32×4 micro-kernel**         |
+| **Vector type**               | `vfloat32m1_t`        | `vfloat32m2_t`           | `vfloat32m1_t`             | **`vfloat32m4_t`**            |
+| **LMUL setting**              | 1                     | 2                        | 1                          | **4**                         |
+| **VL usage**                  | VL = 8 FP32 lanes     | VL = 16 FP32 lanes       | VL = 8 FP32 lanes          | **VL = 32 FP32 lanes**        |
+| **Register footprint**        | Low                   | Medium                   | Low                        | **Very high**                 |
+| **Accumulator layout**        | 16 rows × 8 cols      | Same as baseline         | Same as baseline           | **32 rows × 4 cols**          |
+| **K-loop structure**          | Single FMA per step   | Same loop, wider vectors | **Two FMAs per iteration** | Single FMA, very wide         |
+| **Loop unrolling**            | None                  | None                     | **Unroll ×2 in K**         | None                          |
+| **Memory access pattern**     | Scalar A, vector B    | Same                     | Same                       | **Wider vector loads**        |
+| **Kernel structure changed?** | —                     | ❌ No                     | ❌ No                       | **✅ Yes**                     |
+| **Reason for change**         | Baseline reference    | More parallelism         | Hide loop overhead         | **Register pressure control** |
+
+
