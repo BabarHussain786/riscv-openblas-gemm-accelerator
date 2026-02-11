@@ -19,4 +19,37 @@
 | Vector utilization        | Moderate              | **Higher**                             |
 | Design change vs baseline | —                     | **Increase M, reduce N to fit LMUL=4** |
 
-Kernel-3 scales the baseline 16×8 design to LMUL=4 by doubling the row dimension and halving the column dimension to maximize vector utilization while remaining register-safe
+📊 24-Hour Benchmark Methodology (LMUL = 4)
+
+This benchmark evaluates the LMUL=4 RVV SGEMM micro-kernel (32×4 FP32) under long, sustained execution to obtain stable and statistically reliable performance metrics.
+
+🔹 What runs for 24 hours?
+
+The benchmark repeatedly executes a fixed set of representative matrix sizes in a loop called a cycle.
+Each cycle runs the same test cases once, then the next cycle starts immediately.
+
+Total runtime target: ~24 hours
+Total completed cycles: 50
+
+Each cycle includes:
+Square matrix (4096³)
+FLOP-equivalent matrix (4096×4096×1024)
+Rectangular matrix (1024×4096×4096)
+Scaling tests (K, N variants)
+This repetition ensures results are not biased by transient system effects (warm-up, cache state, OS noise).
+
+🔹 How performance is measured
+
+For each test case in every cycle:
+Execution time is measured using a monotonic high-resolution timer.
+GFLOPS is computed as:
+GFLOPS = (2 × M × N × K) / execution_time
+Results are logged per cycle (GFLOPS + time).
+After the 24-hour run:
+All cycles are aggregated
+Average GFLOPS and average execution time are computed across cycles
+Variability is checked to confirm stability
+
+🔹 Why 24 hours?
+This is especially important for RISC-V RVV kernels, where vector length, LMUL, and memory pressure interact over time.
+
