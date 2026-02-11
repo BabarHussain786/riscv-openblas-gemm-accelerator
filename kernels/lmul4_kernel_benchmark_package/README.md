@@ -52,6 +52,7 @@ Variability is checked to confirm stability
 🔹 Why 24 hours?
 This is especially important for RISC-V RVV kernels, where vector length, LMUL, and memory pressure interact over time.
 
+-
 
 | Aspect                        | **Baseline (LMUL=1)** | **LMUL=2**               | **K-Unroll (×2)**          | **LMUL=4**                    |
 | ----------------------------- | --------------------- | ------------------------ | -------------------------- | ----------------------------- |
