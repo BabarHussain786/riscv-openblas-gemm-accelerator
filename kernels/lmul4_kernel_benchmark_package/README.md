@@ -28,8 +28,7 @@ This benchmark evaluates the LMUL=4 RVV SGEMM micro-kernel (32×4 FP32) under lo
 The benchmark repeatedly executes a fixed set of representative matrix sizes in a loop called a cycle.
 Each cycle runs the same test cases once, then the next cycle starts immediately.
 
-Total runtime target: ~24 hours
-Total completed cycles: 50
+Total runtime target: ~24 hours - Total completed cycles
 
 Each cycle includes:
 Square matrix (4096³)
