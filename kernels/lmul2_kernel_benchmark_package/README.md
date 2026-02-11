@@ -17,6 +17,7 @@ Scaling tests (K, N variants)
 This repetition ensures results are not biased by transient system effects such as warm-up behavior, cache state, or OS noise.
 
 🔹 How performance is measured
+
 For each test case in every cycle:
 Execution time is measured using a monotonic high-resolution timer
 
