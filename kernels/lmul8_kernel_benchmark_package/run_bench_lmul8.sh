@@ -1,118 +1,131 @@
 #!/usr/bin/env bash
-# run_bench_lmul8.sh - 24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK (LMUL=8 64x2)
+# run_bench_lmul8.sh — 24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK (LMUL=8)
+
 set -euo pipefail
 
+TARGET="./sgemm_bench_lmul8"
 KERNEL_NAME="sgemm_kernel_64x2_zvl256b_lmul8"
-BIN="./sgemm_bench"
 
-SIZES=(256 512 768 1024 1280 1536 1792 2048 2304 2560 3072 3584 4096)
-RECTS=( "1024 2048 2048" "2048 1024 2048" "2048 2048 1024" "4096 2048 4096" "2048 4096 4096" )
+echo "====================================================="
+echo "24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK"
+echo "Kernel: ${KERNEL_NAME}"
+echo "Start:  $(date)"
+echo "Host:   $(hostname)"
+echo "====================================================="
 
-ts() { date "+[%m-%d %H:%M:%S]"; }
+# -------- background mode --------
+if [[ "${1:-}" == "bg" || "${1:-}" == "background" ]]; then
+  LOGFILE="24h_benchmark_lmul8_$(date +%Y%m%d_%H%M%S).log"
+  echo "Running 24-hour benchmark in BACKGROUND..."
+  echo "Logs:    $LOGFILE"
+  echo "Monitor: tail -f $LOGFILE"
+  echo "Status:  ps aux | grep sgemm_bench_lmul8"
+  nohup "$0" 24h-foreground > "$LOGFILE" 2>&1 &
+  echo "PID: $! | Stop: kill $!"
+  exit 0
+fi
 
-usage() {
-  cat <<EOF
-Usage:
-  $0 24h        Run ~24 hours (interactive)
-  $0 bg         Run in background (nohup)
-  $0 monitor    Show status + tail of newest log
-  $0 status     Only print RUNNING/STOPPED + PID
-  $0 kill       Stop running benchmark
-EOF
+# -------- build if needed --------
+if [[ ! -x "$TARGET" ]]; then
+  echo "Building benchmark..."
+  make
+  echo "✓ Build successful!"
+fi
+
+# -------- usage --------
+if [[ "${1:-}" != "24h-foreground" ]]; then
+  echo ""
+  echo "USAGE:"
+  echo "  ./run_bench_lmul8.sh 24h      - 24-hour benchmark (interactive)"
+  echo "  ./run_bench_lmul8.sh bg       - 24-hour benchmark (background)"
+  echo ""
+  echo "Quick test:"
+  echo "  $TARGET 1024 1024 1024"
+  exit 1
+fi
+
+# ===== 24-HOUR MAIN CODE =====
+RESULTS_DIR="24h_results_lmul8_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$RESULTS_DIR"
+
+log() {
+  echo "[$(date '+%m-%d %H:%M:%S')] $1" | tee -a "$RESULTS_DIR/benchmark.log"
 }
 
-status_only() {
-  if pgrep -f "sgemm_bench" >/dev/null 2>&1; then
-    echo "STATUS: RUNNING"
-    pgrep -f "sgemm_bench" | head -1 | awk '{print "PID:",$1}'
-  else
-    echo "STATUS: STOPPED"
-  fi
+run_bench() {
+  local M=$1 N=$2 K=$3 label=$4 cycle=$5
+  local out
+  out="$($TARGET "$M" "$N" "$K" 1.0 3 30 2>&1 | tail -1)"
+
+  echo "$cycle,$label,$out" >> "$RESULTS_DIR/all_results.csv"
+  echo "$out" >> "$RESULTS_DIR/raw.csv"
+
+  local _M _N _K time gflops gbs intensity vec_eff tail_overhead bound
+  read -r _M _N _K time gflops gbs intensity vec_eff tail_overhead bound <<< "$out"
+  log "Cycle $cycle | $label: ${gflops} GFLOPS, ${time} sec, ${bound}"
 }
 
-monitor() {
-  status_only
-  local latest
-  latest="$(ls -t 24h_benchmark_lmul8_*.log 2>/dev/null | head -1 || true)"
-  if [[ -n "${latest}" ]]; then
-    echo ""
-    echo "Latest log: ${latest}"
-    tail -20 "${latest}" || true
-  else
-    echo "No log found yet."
-  fi
-}
+ALL_TESTS=(
 
-kill_run() {
-  pkill -f "sgemm_bench" >/dev/null 2>&1 || true
-  echo "✓ Stopped any running sgemm_bench"
-}
+  # Square
+  "1024³:1024:1024:1024"
+  "2048³:2048:2048:2048"
+  "4096³:4096:4096:4096"
 
-run_24h() {
-  if [[ ! -x "${BIN}" ]]; then
-    echo "❌ ${BIN} not found. Run: make"
-    exit 1
-  fi
+  # Rectangular
+  "4096×4096×1024:4096:4096:1024"
+  "1024×4096×4096:1024:4096:4096"
 
-  local LOGFILE="24h_benchmark_lmul8_$(date +%Y%m%d_%H%M%S).log"
-  local start end now
-  start="$(date +%s)"
-  end="$((start + 24*3600))"
+  # Tall & skinny
+  "16384×128×4096:16384:128:4096"
 
-  {
-    echo "====================================================="
-    echo "24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK"
-    echo "Kernel: ${KERNEL_NAME} (LMUL=8, 64x2)"
-    echo "Start: $(date)"
-    echo "Host: $(hostname)"
-    echo "====================================================="
-    echo "$(ts) 24-hour comprehensive benchmark started"
-  } | tee -a "${LOGFILE}"
+  # Wide
+  "128×16384×4096:128:16384:4096"
 
-  local cycle=0
-  while :; do
-    now="$(date +%s)"
-    if (( now >= end )); then
-      echo "$(ts) ✅ 24-hour time limit reached. Stopping." | tee -a "${LOGFILE}"
-      break
-    fi
+  # K scaling
+  "K=256:4096:4096:256"
+  "K=1024:4096:4096:1024"
+  "K=4096:4096:4096:4096"
 
-    cycle=$((cycle+1))
-    echo "$(ts) === STARTING CYCLE ${cycle} ===" | tee -a "${LOGFILE}"
+  # M scaling
+  "M=1024:1024:4096:4096"
+  "M=4096:4096:4096:4096"
 
-    for s in "${SIZES[@]}"; do
-      now="$(date +%s)"; if (( now >= end )); then break; fi
-      line="$(${BIN} "${s}" "${s}" "${s}" 1.0 3 10)"
-      read -r M N K t gflops gbs intensity vec_eff tail bound <<<"${line}"
-      echo "$(ts) Cycle ${cycle} | ${s}³: ${gflops} GFLOPS, ${t} sec, ${bound}" | tee -a "${LOGFILE}"
-    done
+  # N scaling
+  "N=1024:4096:1024:4096"
+  "N=4096:4096:4096:4096"
+)
 
-    for r in "${RECTS[@]}"; do
-      now="$(date +%s)"; if (( now >= end )); then break; fi
-      read -r M N K <<<"${r}"
-      line="$(${BIN} "${M}" "${N}" "${K}" 1.0 3 10)"
-      read -r _M _N _K t gflops gbs intensity vec_eff tail bound <<<"${line}"
-      echo "$(ts) Cycle ${cycle} | ${M}x${N}x${K}: ${gflops} GFLOPS, ${t} sec, ${bound}" | tee -a "${LOGFILE}"
-    done
+echo "cycle,label,M,N,K,time,gflops,gbs,intensity,vec_eff,tail_overhead,bound" \
+  > "$RESULTS_DIR/all_results.csv"
+
+log "24-hour comprehensive benchmark started"
+log "Kernel: $KERNEL_NAME"
+log "Total test cases: ${#ALL_TESTS[@]}"
+
+CYCLE=1
+START_24H=$(date +%s)
+
+while true; do
+  log "=== STARTING CYCLE $CYCLE ==="
+
+  for t in "${ALL_TESTS[@]}"; do
+    IFS=':' read -r label M N K <<< "$t"
+    run_bench "$M" "$N" "$K" "$label" "$CYCLE"
+    sleep 2
   done
 
-  echo "$(ts) Benchmark finished. Log saved: ${LOGFILE}" | tee -a "${LOGFILE}"
-}
+  NOW=$(date +%s)
+  if (( NOW - START_24H >= 86400 )); then
+    log "24 hours completed!"
+    break
+  fi
 
-run_bg() {
-  local LOGFILE="24h_benchmark_lmul8_$(date +%Y%m%d_%H%M%S).log"
-  echo "Starting background run, log: ${LOGFILE}"
-  nohup bash "$0" 24h > "${LOGFILE}" 2>&1 &
-  echo "✓ Background PID: $!"
-}
+  CYCLE=$((CYCLE + 1))
+done
 
-cmd="${1:-}"
-case "${cmd}" in
-  24h) run_24h ;;
-  bg|background) run_bg ;;
-  monitor) monitor ;;
-  status) status_only ;;
-  kill) kill_run ;;
-  ""|-h|--help|help) usage ;;
-  *) echo "Unknown command: ${cmd}"; usage; exit 1 ;;
-esac
+log "Benchmark COMPLETE!"
+echo "====================================================="
+echo "24-HOUR BENCHMARK FINISHED AT: $(date)"
+echo "Results saved to: $RESULTS_DIR/"
+echo "====================================================="
