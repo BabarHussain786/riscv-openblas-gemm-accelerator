@@ -1,3 +1,41 @@
+bananapi@k1:~/MAT/OpenBLAS/kernel/riscv64/lmul8_kernel_benchmark_package$ cat 24h_benchmark_lmul8_20260210_200009.log
+=====================================================
+24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK
+Kernel: sgemm_kernel_64x2_zvl256b_lmul8
+Start:  Tue Feb 10 08:00:09 PM CST 2026
+Host:   k1
+=====================================================
+Building benchmark...
+gcc -O3 -march=rv64gcv_zvl256b -mabi=lp64d -std=c11 -Wall -Wextra sgemm_kernel_64x2_zvl256b_lmul8.c sgemm_kernel_64x2_zvl256b_lmul8_benchmark.c -o sgemm_bench_lmul8 -lm
+✓ Built sgemm_bench_lmul8 (LMUL=8)
+✓ Build successful!
+[02-10 20:00:14] 24-hour comprehensive benchmark started
+[02-10 20:00:14] Kernel: sgemm_kernel_64x2_zvl256b_lmul8
+[02-10 20:00:14] Total test cases: 14
+[02-10 20:00:14] === STARTING CYCLE 1 ===
+[02-10 20:00:25] Cycle 1 | 1024³: 6.07 GFLOPS, 0.353640 sec, COMPUTE
+[02-10 20:02:09] Cycle 1 | 2048³: 5.58 GFLOPS, 3.077211 sec, COMPUTE
+[02-10 20:14:50] Cycle 1 | 4096³: 5.98 GFLOPS, 22.989424 sec, COMPUTE
+[02-10 20:18:06] Cycle 1 | 4096×4096×1024: 5.89 GFLOPS, 5.834419 sec, COMPUTE
+[02-10 20:21:14] Cycle 1 | 1024×4096×4096: 6.08 GFLOPS, 5.652923 sec, COMPUTE
+[02-10 20:22:53] Cycle 1 | 16384×128×4096: 5.95 GFLOPS, 2.888007 sec, COMPUTE
+[02-10 20:24:23] Cycle 1 | 128×16384×4096: 6.53 GFLOPS, 2.630890 sec, COMPUTE
+[02-10 20:25:15] Cycle 1 | K=256: 5.69 GFLOPS, 1.509820 sec, COMPUTE
+[02-10 20:28:29] Cycle 1 | K=1024: 5.93 GFLOPS, 5.795425 sec, COMPUTE
+[02-10 20:40:59] Cycle 1 | K=4096: 6.07 GFLOPS, 22.637719 sec, COMPUTE
+[02-10 20:44:08] Cycle 1 | M=1024: 6.09 GFLOPS, 5.643874 sec, COMPUTE
+[02-10 20:56:46] Cycle 1 | M=4096: 6.01 GFLOPS, 22.867204 sec, COMPUTE
+[02-10 20:59:57] Cycle 1 | N=1024: 6.01 GFLOPS, 5.713556 sec, COMPUTE
+[02-10 21:12:29] Cycle 1 | N=4096: 6.05 GFLOPS, 22.714198 sec, COMPUTE
+[02-10 21:12:31] 24 hours completed!
+[02-10 21:12:31] Benchmark COMPLETE!
+=====================================================
+24-HOUR BENCHMARK FINISHED AT: Tue Feb 10 09:12:31 PM CST 2026
+Results saved to: 24h_results_lmul8_20260210_200014/
+=====================================================
+
+-
+
 bananapi@k1:~/MAT/OpenBLAS/kernel/riscv64/lmul8_kernel_benchmark_package$ cat 24h_benchmark_lmul8_20260209_052555.log
 =====================================================
 24-HOUR RISC-V SGEMM COMPREHENSIVE BENCHMARK
@@ -1360,3 +1398,4 @@ Host: k1
 OMPUTE
 [02-10 05:27:17] ✅ 24-hour time limit reached. Stopping.
 [02-10 05:27:17] Benchmark finished. Log saved: 24h_benchmark_lmul8_20260209_052555.log
+
