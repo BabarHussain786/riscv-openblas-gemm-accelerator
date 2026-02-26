@@ -7,8 +7,8 @@
 typedef long BLASLONG;
 typedef float FLOAT;
 
-/* Kernel declaration: LMUL=1 + Unroll×4 PRAGMA */
-int sgemm_kernel_16x8_zvl256b_lmul1_opt_unroll4(
+/* Kernel declaration: LMUL=1 + Unroll×8 PRAGMA */
+int sgemm_kernel_16x8_zvl256b_lmul1_opt_unroll8(
     BLASLONG M, BLASLONG N, BLASLONG K,
     FLOAT alpha, FLOAT *A, FLOAT *B, FLOAT *C, BLASLONG ldc
 );
@@ -37,35 +37,26 @@ int main(int argc, char **argv)
     BLASLONG N = atol(argv[2]);
     BLASLONG K = atol(argv[3]);
 
-    size_t sizeA = (size_t)M * (size_t)K;
-    size_t sizeB = (size_t)N * (size_t)K;
-    size_t sizeC = (size_t)M * (size_t)N;
+    size_t sizeA = (size_t)M * K;
+    size_t sizeB = (size_t)N * K;
+    size_t sizeC = (size_t)M * N;
 
-    size_t bytesA = sizeA * sizeof(FLOAT);
-    size_t bytesB = sizeB * sizeof(FLOAT);
-    size_t bytesC = sizeC * sizeof(FLOAT);
+    size_t padA = (sizeA*sizeof(FLOAT)+63)&~63;
+    size_t padB = (sizeB*sizeof(FLOAT)+63)&~63;
+    size_t padC = (sizeC*sizeof(FLOAT)+63)&~63;
 
-    size_t padA = (bytesA + 63u) & ~((size_t)63u);
-    size_t padB = (bytesB + 63u) & ~((size_t)63u);
-    size_t padC = (bytesC + 63u) & ~((size_t)63u);
+    FLOAT *A = aligned_alloc(64,padA);
+    FLOAT *B = aligned_alloc(64,padB);
+    FLOAT *C = aligned_alloc(64,padC);
 
-    FLOAT *A = (FLOAT*)aligned_alloc(64, padA);
-    FLOAT *B = (FLOAT*)aligned_alloc(64, padB);
-    FLOAT *C = (FLOAT*)aligned_alloc(64, padC);
-
-    if (!A || !B || !C) {
-        fprintf(stderr, "Allocation failed\n");
-        return 1;
-    }
-
-    fill(A, sizeA);
-    fill(B, sizeB);
-    fill(C, sizeC);
+    fill(A,sizeA);
+    fill(B,sizeB);
+    fill(C,sizeC);
 
     double t0 = now_sec();
 
-    sgemm_kernel_16x8_zvl256b_lmul1_opt_unroll4(
-        M, N, K, 1.0f, A, B, C, M
+    sgemm_kernel_16x8_zvl256b_lmul1_opt_unroll8(
+        M,N,K,1.0f,A,B,C,M
     );
 
     double t1 = now_sec();
@@ -73,12 +64,11 @@ int main(int argc, char **argv)
     double time = t1 - t0;
 
     double gflops =
-        (2.0 * (double)M * (double)N * (double)K)
-        / (time * 1e9);
+        (2.0*(double)M*(double)N*(double)K)/(time*1e9);
 
-    printf("M=%ld N=%ld K=%ld\n", M, N, K);
-    printf("Time: %.6f sec\n", time);
-    printf("GFLOPS: %.4f\n", gflops);
+    printf("M=%ld N=%ld K=%ld\n",M,N,K);
+    printf("Time: %.6f sec\n",time);
+    printf("GFLOPS: %.4f\n",gflops);
 
     free(A);
     free(B);
