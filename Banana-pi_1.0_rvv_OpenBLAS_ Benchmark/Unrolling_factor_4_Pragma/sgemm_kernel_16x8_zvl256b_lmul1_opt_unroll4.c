@@ -14,7 +14,7 @@ typedef long  BLASLONG;
 typedef float FLOAT;
 
 #ifndef CNAME
-#define CNAME sgemm_kernel_16x8_zvl256b_lmul1_opt
+#define CNAME sgemm_kernel_16x8_zvl256b_lmul1_opt_unroll4
 #endif
 
 // Cross-compiler compatibility for unroll pragmas
@@ -934,3 +934,4 @@ int CNAME(BLASLONG M, BLASLONG N, BLASLONG K,
 
     return 0;
 }
+
