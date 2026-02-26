@@ -41,20 +41,16 @@ int main(int argc, char **argv)
     size_t sizeB = (size_t)N * (size_t)K;
     size_t sizeC = (size_t)M * (size_t)N;
 
-    size_t bytesA = sizeA * sizeof(FLOAT);
-    size_t bytesB = sizeB * sizeof(FLOAT);
-    size_t bytesC = sizeC * sizeof(FLOAT);
+    size_t padA = (sizeA*sizeof(FLOAT) + 63u) & ~((size_t)63u);
+    size_t padB = (sizeB*sizeof(FLOAT) + 63u) & ~((size_t)63u);
+    size_t padC = (sizeC*sizeof(FLOAT) + 63u) & ~((size_t)63u);
 
-    size_t padA = (bytesA + 63u) & ~((size_t)63u);
-    size_t padB = (bytesB + 63u) & ~((size_t)63u);
-    size_t padC = (bytesC + 63u) & ~((size_t)63u);
-
-    FLOAT *A = (FLOAT*)aligned_alloc(64, padA);
-    FLOAT *B = (FLOAT*)aligned_alloc(64, padB);
-    FLOAT *C = (FLOAT*)aligned_alloc(64, padC);
+    FLOAT *A = aligned_alloc(64, padA);
+    FLOAT *B = aligned_alloc(64, padB);
+    FLOAT *C = aligned_alloc(64, padC);
 
     if (!A || !B || !C) {
-        fprintf(stderr, "Allocation failed\n");
+        printf("Allocation failed\n");
         return 1;
     }
 
