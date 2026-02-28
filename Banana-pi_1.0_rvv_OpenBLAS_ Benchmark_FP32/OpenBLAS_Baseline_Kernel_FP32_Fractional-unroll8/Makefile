@@ -1,10 +1,10 @@
 CC=gcc
 
-CFLAGS= -O3 \
-        -march=rv64gcv_zvl128b \
-        -mabi=lp64d \
-        -std=c11 \
-        -Wall
+CFLAGS=-O3 \
+	-march=rv64gcv_zvl128b \
+	-mabi=lp64d \
+	-std=c11 \
+	-Wall
 
 TARGET=bench
 
@@ -14,7 +14,7 @@ BENCH=sgemm_bench.c
 all: $(TARGET)
 
 $(TARGET): $(KERNEL) $(BENCH)
-        $(CC) $(CFLAGS) $(KERNEL) $(BENCH) -o $(TARGET)
+	$(CC) $(CFLAGS) $(KERNEL) $(BENCH) -o $(TARGET)
 
 clean:
-        rm -f $(TARGET)
+	rm -f $(TARGET)
