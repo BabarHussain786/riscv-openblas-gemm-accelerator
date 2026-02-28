@@ -51,3 +51,8 @@ Each benchmark folder contains:
 ```bash
 git clone https://github.com/BabarHussain786/riscv-openblas-gemm-accelerator.git
 cd riscv-openblas-gemm-accelerator/"Banana-pi_1.0_rvv_OpenBLAS_ Benchmark_FP32"
+
+chmod +x run_all.sh
+for d in OpenBLAS_*; do chmod +x "$d/run.sh"; done
+
+./run_all.sh
