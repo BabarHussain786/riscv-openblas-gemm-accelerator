@@ -13,7 +13,7 @@ Each variant is runnable standalone using the same structure:
 
 ## Benchmark Variants (Folders)
 
-You tested and stored these FP32 variants (Zvl128b):
+Tested and stored these FP32 variants (Zvl128b):
 
 - **OpenBLAS_Baseline_Kernel_FP32**  
   Baseline kernel (no fractional LMUL)
