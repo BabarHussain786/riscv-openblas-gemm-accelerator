@@ -1,0 +1,26 @@
+=======================================
+RVV SGEMM BENCHMARK (16x8 - LMUL 1 - Baseline)
+Each shape runs 6 times
+=======================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -DCNAME=sgemm_kernel_16x8_zvl128b sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c sgemm_bench.c -o bench
+sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c: In function ‘sgemm_kernel_16x8_zvl128b’:
+sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c:287:19: warning: variable ‘B7’ set but not used [-Wunused-but-set-variable]
+  287 |             float B7 = B[bi+7];
+      |                   ^~
+sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c:286:19: warning: variable ‘B6’ set but not used [-Wunused-but-set-variable]
+  286 |             float B6 = B[bi+6];
+      |                   ^~
+sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c:285:19: warning: variable ‘B5’ set but not used [-Wunused-but-set-variable]
+  285 |             float B5 = B[bi+5];
+      |                   ^~
+sgemm_kernel_16x8_zvl256b_lmul1_unroll1.c:284:19: warning: variable ‘B4’ set but not used [-Wunused-but-set-variable]
+  284 |             float B4 = B[bi+4];
+      |                   ^~
+
+Shape: Square (4096x4096x4096)
+Run 1
+M=4096 N=4096 K=4096
+Time: 12.433397 sec
+GFLOPS: 11.0540
+Run 2
