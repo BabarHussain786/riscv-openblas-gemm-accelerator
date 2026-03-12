@@ -1,0 +1,28 @@
+=======================================
+Kernel: dgemm_kernel_8x4_zvl128b_lmul2_unroll4
+Shape: 2048 x 2048 x 2048
+=======================================
+Run 1
+M=2048 N=2048 K=2048
+Time: 4.483382 sec
+GFLOPS: 3.8319
+Run 2
+M=2048 N=2048 K=2048
+Time: 4.542747 sec
+GFLOPS: 3.7818
+Run 3
+M=2048 N=2048 K=2048
+Time: 5.370260 sec
+GFLOPS: 3.1991
+Run 4
+M=2048 N=2048 K=2048
+Time: 13.558461 sec
+GFLOPS: 1.2671
+Run 5
+M=2048 N=2048 K=2048
+Time: 13.950490 sec
+GFLOPS: 1.2315
+Run 6
+M=2048 N=2048 K=2048
+Time: 11.959211 sec
+GFLOPS: 1.4365

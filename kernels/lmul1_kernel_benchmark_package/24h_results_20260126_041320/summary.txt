@@ -1,0 +1,45 @@
+=== 24-HOUR BENCHMARK SUMMARY ===
+Total samples: 296
+Total cycles: 8
+Average GFLOPS: 0.00
+Efficiency: 0.0% of 24 GFLOPS peak
+Total runtime: 24 hours
+
+=== TOP 5 PERFORMING TESTS ===
+N=8192              : 0.00 GFLOPS (8 samples)
+N=4096              : 0.00 GFLOPS (8 samples)
+K=1024              : 0.00 GFLOPS (8 samples)
+K=256               : 0.00 GFLOPS (8 samples)
+3072³               : 0.00 GFLOPS (8 samples)
+1024³               : 0.00 GFLOPS (8 samples)
+N=16384             : 0.00 GFLOPS (8 samples)
+M=8192              : 0.00 GFLOPS (8 samples)
+M=4096              : 0.00 GFLOPS (8 samples)
+K=8192              : 0.00 GFLOPS (8 samples)
+32768×64×4096       : 0.00 GFLOPS (8 samples)
+64×32768×4096       : 0.00 GFLOPS (8 samples)
+4096×4096×1024      : 0.00 GFLOPS (8 samples)
+N=2048              : 0.00 GFLOPS (8 samples)
+M=512               : 0.00 GFLOPS (8 samples)
+K=4096              : 0.00 GFLOPS (8 samples)
+1792³               : 0.00 GFLOPS (8 samples)
+N=1024              : 0.00 GFLOPS (8 samples)
+K=512               : 0.00 GFLOPS (8 samples)
+1024×4096×4096      : 0.00 GFLOPS (8 samples)
+3584³               : 0.00 GFLOPS (8 samples)
+1536³               : 0.00 GFLOPS (8 samples)
+M=2048              : 0.00 GFLOPS (8 samples)
+K=16384             : 0.00 GFLOPS (8 samples)
+K=2048              : 0.00 GFLOPS (8 samples)
+128×16384×4096      : 0.00 GFLOPS (8 samples)
+256×8192×4096       : 0.00 GFLOPS (8 samples)
+1280³               : 0.00 GFLOPS (8 samples)
+M=1024              : 0.00 GFLOPS (8 samples)
+8192×256×4096       : 0.00 GFLOPS (8 samples)
+4096×1024×4096      : 0.00 GFLOPS (8 samples)
+4096³               : 0.00 GFLOPS (8 samples)
+2048³               : 0.00 GFLOPS (8 samples)
+16384×128×4096      : 0.00 GFLOPS (8 samples)
+2560³               : 0.00 GFLOPS (8 samples)
+N=512               : 0.00 GFLOPS (8 samples)
+M=16384             : 0.00 GFLOPS (8 samples)

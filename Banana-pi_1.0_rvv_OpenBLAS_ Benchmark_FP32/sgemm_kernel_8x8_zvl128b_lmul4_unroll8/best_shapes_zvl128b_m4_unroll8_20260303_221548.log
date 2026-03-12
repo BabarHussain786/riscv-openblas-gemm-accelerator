@@ -1,0 +1,44 @@
+=======================================
+RVV SGEMM LMUL m4 UNROLL 8 BENCHMARK
+Each shape runs 6 times
+=======================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall sgemm_kernel_8x8_zvl128b.c sgemm_bench.c -o bench
+
+Shape: Square
+Run 1
+=======================================
+RVV SGEMM LMUL m4 Unroll 8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 76.308980 sec
+GFLOPS: 1.8011
+Run 2
+=======================================
+RVV SGEMM LMUL m4 Unroll 8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 76.016392 sec
+GFLOPS: 1.8080
+Run 3
+=======================================
+RVV SGEMM LMUL m4 Unroll 8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 76.230651 sec
+GFLOPS: 1.8029
+Run 4
+=======================================
+RVV SGEMM LMUL m4 Unroll 8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 76.228177 sec
+GFLOPS: 1.8030
+Run 5
+=======================================
+RVV SGEMM LMUL m4 Unroll 8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 76.318945 sec
+GFLOPS: 1.8008
+Run 6
