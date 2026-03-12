@@ -1,0 +1,15 @@
+=======================================
+RVV SGEMM BENCHMARK (LMUL 1/2 - 16x8)
+Each shape runs 6 times
+=======================================
+rm -f bench
+make: *** No rule to make target 'sgemm_kernel_16x8_zvl256b_lmulmf2_unroll2.c', needed by 'bench'.  Stop.
+
+Shape: Square (4096x4096x4096)
+Run 1
+Run 2
+Run 3
+Run 4
+Run 5
+Run 6
+Done.

@@ -1,0 +1,33 @@
+=======================================
+RVV SGEMM BENCHMARK (SQUARE ONLY)
+Each shape runs 6 times
+=======================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -DCNAME=sgemm_kernel_16x8_zvl128b sgemm_kernel_16x8_zvl256b_lmul2_unroll1.c sgemm_bench.c -o bench
+
+Shape: Square (4096x4096x4096)
+Run 1
+M=4096 N=4096 K=4096
+Time: 40.166705 sec
+GFLOPS: 3.4217
+Run 2
+M=4096 N=4096 K=4096
+Time: 40.540646 sec
+GFLOPS: 3.3902
+Run 3
+M=4096 N=4096 K=4096
+Time: 40.164270 sec
+GFLOPS: 3.4219
+Run 4
+M=4096 N=4096 K=4096
+Time: 40.536697 sec
+GFLOPS: 3.3905
+Run 5
+M=4096 N=4096 K=4096
+Time: 40.532555 sec
+GFLOPS: 3.3908
+Run 6
+M=4096 N=4096 K=4096
+Time: 40.163857 sec
+GFLOPS: 3.4220
+Done.

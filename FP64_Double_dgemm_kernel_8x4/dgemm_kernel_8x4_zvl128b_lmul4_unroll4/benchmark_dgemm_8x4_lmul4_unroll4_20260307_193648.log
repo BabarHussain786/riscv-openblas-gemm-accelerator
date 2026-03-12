@@ -1,0 +1,33 @@
+===============================================
+RVV DGEMM BENCHMARK (FP64 8x4 - LMUL 4 Unroll 4)
+Each shape runs 6 times
+===============================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -Wno-unknown-pragmas dgemm_kernel_8x4_zvl128b_lmul4_unroll4.c dgemm_bench.c -o bench
+
+Shape: Square (2048x2048x2048)
+Run 1
+M=2048 N=2048 K=2048
+Time: 5.966345 sec
+GFLOPS: 2.8795
+Run 2
+M=2048 N=2048 K=2048
+Time: 5.932599 sec
+GFLOPS: 2.8958
+Run 3
+M=2048 N=2048 K=2048
+Time: 5.930539 sec
+GFLOPS: 2.8968
+Run 4
+M=2048 N=2048 K=2048
+Time: 6.189754 sec
+GFLOPS: 2.7755
+Run 5
+M=2048 N=2048 K=2048
+Time: 6.175607 sec
+GFLOPS: 2.7819
+Run 6
+M=2048 N=2048 K=2048
+Time: 6.195962 sec
+GFLOPS: 2.7728
+Done.

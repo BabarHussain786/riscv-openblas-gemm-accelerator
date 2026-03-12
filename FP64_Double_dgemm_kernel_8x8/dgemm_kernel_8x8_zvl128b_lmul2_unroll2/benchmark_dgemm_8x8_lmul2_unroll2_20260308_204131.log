@@ -1,0 +1,7 @@
+======================================================
+RVV DGEMM BENCHMARK (FP64 8x8 - LMUL 2 - Unroll 2)
+Each shape runs 6 times
+======================================================
+rm -f bench
+make: *** No rule to make target 'dgemm_kernel_8x8_zvl256b_lmul2_unroll2.c', needed by 'bench'.  Stop.
+Compilation failed! Please run 'make' manually to see the error.
