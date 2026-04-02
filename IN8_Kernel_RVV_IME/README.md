@@ -232,8 +232,7 @@ taskset -c 0 ./ime_diag
 - **Illegal instruction on non-AI core (IME path)**  
   Use IME benchmark on AI cores for fast path (`taskset -c 0..3`), or use RVV benchmark on all cores.
 
-- **`aligned_alloc` issues**  
-  Build with a standard C library/toolchain supporting C11 aligned allocation.
+
 
 ---
 
