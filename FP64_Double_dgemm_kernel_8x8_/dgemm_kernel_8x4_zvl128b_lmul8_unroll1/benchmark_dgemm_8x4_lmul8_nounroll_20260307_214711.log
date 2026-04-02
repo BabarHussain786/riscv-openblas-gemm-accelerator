@@ -1,7 +1,0 @@
-======================================================
-RVV DGEMM BENCHMARK (FP64 8x4 - LMUL 8 No Unroll)
-Each shape runs 6 times
-======================================================
-rm -f bench
-make: *** No rule to make target 'dgemm_kernel_8x4_zvl128b_lmul8_nounroll.c', needed by 'bench'.  Stop.
-Compilation failed! Please run 'make' manually.
