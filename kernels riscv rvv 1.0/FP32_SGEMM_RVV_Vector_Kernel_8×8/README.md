@@ -30,7 +30,6 @@ Tested and stored these FP32 variants (Zvl128b):
 - **OpenBLAS_Baseline_Kernel_FP32_Fractional-unroll8**  
   Fractional LMUL **mf2** + `#pragma GCC unroll 8`
 
-> Note: Your local `try/try2/try3/...` folders were just examples; the **actual files are the same layout** in each variant folder.
 
 ---
 
