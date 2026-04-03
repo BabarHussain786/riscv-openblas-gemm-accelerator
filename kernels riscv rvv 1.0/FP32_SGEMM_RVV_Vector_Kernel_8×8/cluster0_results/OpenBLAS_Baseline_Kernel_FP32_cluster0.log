@@ -1,0 +1,29 @@
+=======================================
+Kernel: OpenBLAS_Baseline_Kernel_FP32
+Cluster: 0 (Cores 0-3) AI Cluster with 2.0 TOPS
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 23.641446 sec
+GFLOPS: 5.8135
+Run 2
+M=4096 N=4096 K=4096
+Time: 23.469692 sec
+GFLOPS: 5.8560
+Run 3
+M=4096 N=4096 K=4096
+Time: 23.559858 sec
+GFLOPS: 5.8336
+Run 4
+M=4096 N=4096 K=4096
+Time: 23.410146 sec
+GFLOPS: 5.8709
+Run 5
+M=4096 N=4096 K=4096
+Time: 23.458846 sec
+GFLOPS: 5.8587
+Run 6
+M=4096 N=4096 K=4096
+Time: 23.460423 sec
+GFLOPS: 5.8583

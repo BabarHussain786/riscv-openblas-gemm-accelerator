@@ -1,0 +1,20 @@
+Assembly Instruction Counts (RVV)
+==========================================================
+Kernel Name                              | vmacc  | vmul   | vle8   | vse8  
+--------------------------------------------------------------------------------
+igemm_kernel_8x4_zvl128b_lmul1_unroll1   | 28     | 14     | 33     | 14    
+igemm_kernel_8x4_zvl128b_lmul1_unroll2   | 56     | 14     | 45     | 14    
+igemm_kernel_8x4_zvl128b_lmul1_unroll4   | 112    | 14     | 69     | 14    
+igemm_kernel_8x4_zvl128b_lmul1_unroll8   | 224    | 14     | 117    | 14    
+igemm_kernel_8x4_zvl128b_lmul2_unroll1   | 28     | 14     | 33     | 14    
+igemm_kernel_8x4_zvl128b_lmul2_unroll2   | 56     | 14     | 45     | 14    
+igemm_kernel_8x4_zvl128b_lmul2_unroll4   | 112    | 14     | 69     | 14    
+igemm_kernel_8x4_zvl128b_lmul2_unroll8   | 224    | 14     | 117    | 14    
+igemm_kernel_8x4_zvl128b_lmul4_unroll1   | 28     | 14     | 33     | 14    
+igemm_kernel_8x4_zvl128b_lmul4_unroll2   | 56     | 14     | 45     | 14    
+igemm_kernel_8x4_zvl128b_lmul4_unroll4   | 112    | 14     | 69     | 14    
+igemm_kernel_8x4_zvl128b_lmul4_unroll8   | 224    | 14     | 117    | 14    
+igemm_kernel_8x4_zvl128b_lmul8_unroll1   | 28     | 14     | 33     | 14    
+igemm_kernel_8x4_zvl128b_lmul8_unroll2   | 56     | 14     | 45     | 14    
+igemm_kernel_8x4_zvl128b_lmul8_unroll4   | 112    | 14     | 69     | 14    
+igemm_kernel_8x4_zvl128b_lmul8_unroll8   | 224    | 14     | 117    | 14    

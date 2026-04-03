@@ -1,0 +1,29 @@
+=======================================
+Kernel: sgemm_kernel_16x8_zvl256b_lmulmf2_unroll8
+Cluster: 0 (Cores 0-3) AI Cluster with 2.0 TOPS
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 11.952795 sec
+GFLOPS: 11.4985
+Run 2
+M=4096 N=4096 K=4096
+Time: 11.902886 sec
+GFLOPS: 11.5467
+Run 3
+M=4096 N=4096 K=4096
+Time: 11.803070 sec
+GFLOPS: 11.6443
+Run 4
+M=4096 N=4096 K=4096
+Time: 11.800956 sec
+GFLOPS: 11.6464
+Run 5
+M=4096 N=4096 K=4096
+Time: 11.821106 sec
+GFLOPS: 11.6266
+Run 6
+M=4096 N=4096 K=4096
+Time: 11.923705 sec
+GFLOPS: 11.5265

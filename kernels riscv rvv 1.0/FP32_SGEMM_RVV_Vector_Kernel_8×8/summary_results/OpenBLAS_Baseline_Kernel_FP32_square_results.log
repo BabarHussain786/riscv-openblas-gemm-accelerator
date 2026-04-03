@@ -1,0 +1,28 @@
+=======================================
+Kernel: OpenBLAS_Baseline_Kernel_FP32
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 23.532091 sec
+GFLOPS: 5.8405
+Run 2
+M=4096 N=4096 K=4096
+Time: 26.525581 sec
+GFLOPS: 5.1814
+Run 3
+M=4096 N=4096 K=4096
+Time: 26.530749 sec
+GFLOPS: 5.1804
+Run 4
+M=4096 N=4096 K=4096
+Time: 23.509976 sec
+GFLOPS: 5.8460
+Run 5
+M=4096 N=4096 K=4096
+Time: 23.491234 sec
+GFLOPS: 5.8506
+Run 6
+M=4096 N=4096 K=4096
+Time: 26.654488 sec
+GFLOPS: 5.1563

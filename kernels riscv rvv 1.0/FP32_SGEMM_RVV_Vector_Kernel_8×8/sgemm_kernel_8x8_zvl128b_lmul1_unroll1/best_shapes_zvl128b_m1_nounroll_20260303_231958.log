@@ -1,0 +1,183 @@
+=======================================
+RVV SGEMM LMUL m1 NO UNROLL BENCHMARK
+Each shape runs 6 times
+=======================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall sgemm_kernel_8x8_zvl128b.c sgemm_bench.c -o bench
+
+Shape: Square
+Run 1
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.637125 sec
+GFLOPS: 7.3745
+Run 2
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.632168 sec
+GFLOPS: 7.3764
+Run 3
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.948807 sec
+GFLOPS: 7.2532
+Run 4
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.544512 sec
+GFLOPS: 7.4113
+Run 5
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.891889 sec
+GFLOPS: 7.2750
+Run 6
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.880078 sec
+GFLOPS: 7.2796
+
+Shape: Rectangular
+Run 1
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.645885 sec
+GFLOPS: 7.3957
+Run 2
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.720002 sec
+GFLOPS: 7.2796
+Run 3
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.647244 sec
+GFLOPS: 7.3936
+Run 4
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.703127 sec
+GFLOPS: 7.3057
+Run 5
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.639338 sec
+GFLOPS: 7.4062
+Run 6
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=1024 K=4096
+Time: 4.643559 sec
+GFLOPS: 7.3994
+
+Shape: Tall
+Run 1
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.391569 sec
+GFLOPS: 7.1835
+Run 2
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.351335 sec
+GFLOPS: 7.3064
+Run 3
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.349284 sec
+GFLOPS: 7.3128
+Run 4
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.349236 sec
+GFLOPS: 7.3130
+Run 5
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.425252 sec
+GFLOPS: 7.0837
+Run 6
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=8192 N=256 K=4096
+Time: 2.391576 sec
+GFLOPS: 7.1835
+
+Shape: Wide
+Run 1
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.383210 sec
+GFLOPS: 7.2087
+Run 2
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.378396 sec
+GFLOPS: 7.2233
+Run 3
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.378261 sec
+GFLOPS: 7.2237
+Run 4
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.367934 sec
+GFLOPS: 7.2552
+Run 5
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.378933 sec
+GFLOPS: 7.2217
+Run 6
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=64 N=32768 K=4096
+Time: 2.351090 sec
+GFLOPS: 7.3072
+Done.

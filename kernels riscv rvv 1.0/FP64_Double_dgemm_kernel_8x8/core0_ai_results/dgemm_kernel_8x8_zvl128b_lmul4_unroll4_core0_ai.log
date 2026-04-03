@@ -1,0 +1,29 @@
+=======================================
+Kernel: dgemm_kernel_8x8_zvl128b_lmul4_unroll4
+Core: 0 (AI Cluster - 512KB TCM)
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 80.603715 sec
+GFLOPS: 1.7051
+Run 2
+M=4096 N=4096 K=4096
+Time: 80.546697 sec
+GFLOPS: 1.7063
+Run 3
+M=4096 N=4096 K=4096
+Time: 80.522031 sec
+GFLOPS: 1.7068
+Run 4
+M=4096 N=4096 K=4096
+Time: 80.719210 sec
+GFLOPS: 1.7027
+Run 5
+M=4096 N=4096 K=4096
+Time: 80.869556 sec
+GFLOPS: 1.6995
+Run 6
+M=4096 N=4096 K=4096
+Time: 80.659977 sec
+GFLOPS: 1.7039

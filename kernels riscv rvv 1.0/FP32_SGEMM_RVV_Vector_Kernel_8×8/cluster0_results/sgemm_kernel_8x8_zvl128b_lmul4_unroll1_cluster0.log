@@ -1,0 +1,47 @@
+=======================================
+Kernel: sgemm_kernel_8x8_zvl128b_lmul4_unroll1
+Cluster: 0 (Cores 0-3) AI Cluster with 2.0 TOPS
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 75.586044 sec
+GFLOPS: 1.8183
+Run 2
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 74.985593 sec
+GFLOPS: 1.8329
+Run 3
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 74.981639 sec
+GFLOPS: 1.8330
+Run 4
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 75.134686 sec
+GFLOPS: 1.8292
+Run 5
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 75.560526 sec
+GFLOPS: 1.8189
+Run 6
+=======================================
+RVV SGEMM LMUL m4 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 75.116364 sec
+GFLOPS: 1.8297

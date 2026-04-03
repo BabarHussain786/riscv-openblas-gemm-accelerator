@@ -1,0 +1,33 @@
+======================================================
+RVV IGEMM BENCHMARK (INT8 8x4 - LMUL 8 Unroll 2)
+Each shape runs 6 times
+======================================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -Wno-unknown-pragmas -Ddgemm_kernel_8x4_zvl128b_lmul8_unroll2=igemm_kernel_8x4_zvl128b_lmul8_unroll2_i8i32 igemm_kernel_8x4_zvl128b_lmul8_unroll2_i8i32.c igemm_bench.c -o bench
+
+Shape: Square (2048x2048x2048)
+Run 1
+M=2048 N=2048 K=2048
+Time: 28.713545 sec
+GOPS: 0.5983
+Run 2
+M=2048 N=2048 K=2048
+Time: 28.651456 sec
+GOPS: 0.5996
+Run 3
+M=2048 N=2048 K=2048
+Time: 28.801361 sec
+GOPS: 0.5965
+Run 4
+M=2048 N=2048 K=2048
+Time: 28.818470 sec
+GOPS: 0.5961
+Run 5
+M=2048 N=2048 K=2048
+Time: 28.693292 sec
+GOPS: 0.5987
+Run 6
+M=2048 N=2048 K=2048
+Time: 28.681126 sec
+GOPS: 0.5990
+Done.

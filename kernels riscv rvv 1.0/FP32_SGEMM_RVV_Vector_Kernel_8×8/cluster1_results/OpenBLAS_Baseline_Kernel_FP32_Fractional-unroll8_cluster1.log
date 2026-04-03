@@ -1,0 +1,47 @@
+=======================================
+Kernel: OpenBLAS_Baseline_Kernel_FP32_Fractional-unroll8
+Cluster: 1 (Cores 4-7) General Purpose
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.673927 sec
+GFLOPS: 8.7686
+Run 2
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.660943 sec
+GFLOPS: 8.7759
+Run 3
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.651387 sec
+GFLOPS: 8.7813
+Run 4
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.659600 sec
+GFLOPS: 8.7767
+Run 5
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.641345 sec
+GFLOPS: 8.7869
+Run 6
+=======================================
+RVV SGEMM FRACTIONAL LMUL mf2 UNROLL8 Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 15.649445 sec
+GFLOPS: 8.7824

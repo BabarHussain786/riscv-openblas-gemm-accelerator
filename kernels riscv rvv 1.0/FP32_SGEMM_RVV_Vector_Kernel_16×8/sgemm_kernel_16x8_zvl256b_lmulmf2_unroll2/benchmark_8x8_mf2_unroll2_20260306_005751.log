@@ -1,0 +1,33 @@
+=======================================
+RVV SGEMM BENCHMARK (8x8 - LMUL 1/2 - Unroll 2)
+Each shape runs 6 times
+=======================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -DCNAME=sgemm_kernel_8x8_zvl128b sgemm_kernel_16x8_zvl256b_lmulmf2_unroll2.c sgemm_bench.c -o bench
+
+Shape: Square (4096x4096x4096)
+Run 1
+M=4096 N=4096 K=4096
+Time: 12.174477 sec
+GFLOPS: 11.2891
+Run 2
+M=4096 N=4096 K=4096
+Time: 12.166121 sec
+GFLOPS: 11.2969
+Run 3
+M=4096 N=4096 K=4096
+Time: 12.192329 sec
+GFLOPS: 11.2726
+Run 4
+M=4096 N=4096 K=4096
+Time: 12.123860 sec
+GFLOPS: 11.3362
+Run 5
+M=4096 N=4096 K=4096
+Time: 12.183059 sec
+GFLOPS: 11.2812
+Run 6
+M=4096 N=4096 K=4096
+Time: 12.107450 sec
+GFLOPS: 11.3516
+Done.

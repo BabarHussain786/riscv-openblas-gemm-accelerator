@@ -1,0 +1,29 @@
+=======================================
+Kernel: sgemm_kernel_16x8_zvl256b_lmul2_unroll1
+Core: 4 (General Cluster)
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 40.160655 sec
+GFLOPS: 3.4222
+Run 2
+M=4096 N=4096 K=4096
+Time: 40.159939 sec
+GFLOPS: 3.4223
+Run 3
+M=4096 N=4096 K=4096
+Time: 40.158650 sec
+GFLOPS: 3.4224
+Run 4
+M=4096 N=4096 K=4096
+Time: 40.176807 sec
+GFLOPS: 3.4209
+Run 5
+M=4096 N=4096 K=4096
+Time: 40.152399 sec
+GFLOPS: 3.4229
+Run 6
+M=4096 N=4096 K=4096
+Time: 40.156350 sec
+GFLOPS: 3.4226

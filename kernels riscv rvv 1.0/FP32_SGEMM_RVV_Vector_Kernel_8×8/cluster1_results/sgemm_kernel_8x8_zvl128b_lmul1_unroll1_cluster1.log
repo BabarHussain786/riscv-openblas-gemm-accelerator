@@ -1,0 +1,47 @@
+=======================================
+Kernel: sgemm_kernel_8x8_zvl128b_lmul1_unroll1
+Cluster: 1 (Cores 4-7) General Purpose
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.667391 sec
+GFLOPS: 7.3625
+Run 2
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.664876 sec
+GFLOPS: 7.3635
+Run 3
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.664015 sec
+GFLOPS: 7.3638
+Run 4
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.668706 sec
+GFLOPS: 7.3620
+Run 5
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.662282 sec
+GFLOPS: 7.3645
+Run 6
+=======================================
+RVV SGEMM LMUL m1 No Unroll Benchmark
+=======================================
+M=4096 N=4096 K=4096
+Time: 18.673930 sec
+GFLOPS: 7.3599

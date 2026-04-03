@@ -1,0 +1,11 @@
+======================================================
+RVV IGEMM BENCHMARK (INT8->INT32 8x4 - LMUL 4 Unroll 1)
+Each shape runs 6 times
+======================================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -Wno-unknown-pragmas igemm_kernel_8x4_zvl128b_lmul4_unroll1_i8i32.c igemm_bench.c -o bench
+/usr/bin/ld: /tmp/ccSc9t4E.o: in function `main':
+igemm_bench.c:(.text.startup+0x174): undefined reference to `igemm_kernel_8x4_zvl128b_lmul4_unroll1_i8i32'
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:10: bench] Error 1
+Compilation failed!

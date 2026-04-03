@@ -1,0 +1,29 @@
+=======================================
+Kernel: sgemm_kernel_16x8_zvl256b_lmul1_unroll1
+Core: 0 (AI Cluster - 512KB TCM)
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 12.450753 sec
+GFLOPS: 11.0386
+Run 2
+M=4096 N=4096 K=4096
+Time: 12.418425 sec
+GFLOPS: 11.0673
+Run 3
+M=4096 N=4096 K=4096
+Time: 12.426461 sec
+GFLOPS: 11.0602
+Run 4
+M=4096 N=4096 K=4096
+Time: 12.618177 sec
+GFLOPS: 10.8921
+Run 5
+M=4096 N=4096 K=4096
+Time: 12.435299 sec
+GFLOPS: 11.0523
+Run 6
+M=4096 N=4096 K=4096
+Time: 12.428877 sec
+GFLOPS: 11.0580

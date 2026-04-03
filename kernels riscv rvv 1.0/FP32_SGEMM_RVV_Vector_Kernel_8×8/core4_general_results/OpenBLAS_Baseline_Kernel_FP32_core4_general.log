@@ -1,0 +1,29 @@
+=======================================
+Kernel: OpenBLAS_Baseline_Kernel_FP32
+Core: 4 (General Cluster)
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 26.549606 sec
+GFLOPS: 5.1767
+Run 2
+M=4096 N=4096 K=4096
+Time: 26.547113 sec
+GFLOPS: 5.1772
+Run 3
+M=4096 N=4096 K=4096
+Time: 26.541887 sec
+GFLOPS: 5.1782
+Run 4
+M=4096 N=4096 K=4096
+Time: 26.543255 sec
+GFLOPS: 5.1779
+Run 5
+M=4096 N=4096 K=4096
+Time: 26.536521 sec
+GFLOPS: 5.1792
+Run 6
+M=4096 N=4096 K=4096
+Time: 26.544246 sec
+GFLOPS: 5.1777

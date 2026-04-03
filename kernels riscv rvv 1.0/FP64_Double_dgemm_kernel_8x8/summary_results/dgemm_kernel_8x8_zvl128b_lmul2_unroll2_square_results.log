@@ -1,0 +1,28 @@
+=======================================
+Kernel: dgemm_kernel_8x8_zvl128b_lmul2_unroll2
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 25.510161 sec
+GFLOPS: 5.3876
+Run 2
+M=4096 N=4096 K=4096
+Time: 25.302335 sec
+GFLOPS: 5.4319
+Run 3
+M=4096 N=4096 K=4096
+Time: 24.611882 sec
+GFLOPS: 5.5843
+Run 4
+M=4096 N=4096 K=4096
+Time: 25.449467 sec
+GFLOPS: 5.4005
+Run 5
+M=4096 N=4096 K=4096
+Time: 24.578629 sec
+GFLOPS: 5.5918
+Run 6
+M=4096 N=4096 K=4096
+Time: 24.557766 sec
+GFLOPS: 5.5966

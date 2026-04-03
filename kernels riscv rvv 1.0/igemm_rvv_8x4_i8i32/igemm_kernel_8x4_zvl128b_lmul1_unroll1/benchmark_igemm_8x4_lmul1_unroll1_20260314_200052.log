@@ -1,0 +1,122 @@
+======================================================
+RVV IGEMM BENCHMARK (INT8 8x4 - LMUL 1 No Unroll)
+Each shape runs 6 times
+======================================================
+rm -f bench
+gcc -O3 -march=rv64gcv_zvl128b -mabi=lp64d -std=c11 -Wall -Wno-unknown-pragmas igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c igemm_bench.c -o bench
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c: In function ‘igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32’:
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:53:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+   53 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+In file included from igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:9:
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:54:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+   54 |                 r1 = __riscv_vwmacc_vx_i32m4(r1, B1, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:55:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+   55 |                 r2 = __riscv_vwmacc_vx_i32m4(r2, B2, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:56:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+   56 |                 r3 = __riscv_vwmacc_vx_i32m4(r3, B3, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:102:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  102 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:103:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  103 |                 r1 = __riscv_vwmacc_vx_i32m4(r1, B1, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:104:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  104 |                 r2 = __riscv_vwmacc_vx_i32m4(r2, B2, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:105:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  105 |                 r3 = __riscv_vwmacc_vx_i32m4(r3, B3, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:215:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  215 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:216:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  216 |                 r1 = __riscv_vwmacc_vx_i32m4(r1, B1, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:251:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  251 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:252:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  252 |                 r1 = __riscv_vwmacc_vx_i32m4(r1, B1, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:340:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  340 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+igemm_kernel_8x4_zvl128b_lmul1_unroll1_i8i32.c:366:54: error: incompatible type for argument 3 of ‘__riscv_vwmacc_vx_i32m4’
+  366 |                 r0 = __riscv_vwmacc_vx_i32m4(r0, B0, a8, vl);
+      |                                                      ^~
+      |                                                      |
+      |                                                      vint8m1_t
+/usr/lib/gcc/riscv64-linux-gnu/14/include/riscv_vector.h:40:9: note: expected ‘vint16m2_t’ but argument is of type ‘vint8m1_t’
+   40 | #pragma riscv intrinsic "vector"
+      |         ^~~~~
+make: *** [Makefile:11: bench] Error 1
+Compilation failed!

@@ -1,0 +1,29 @@
+=======================================
+Kernel: dgemm_kernel_8x8_zvl128b_lmul2_unroll4
+Cluster: 0 (Cores 0-3) AI Cluster with 2.0 TOPS
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 27.811805 sec
+GFLOPS: 4.9417
+Run 2
+M=4096 N=4096 K=4096
+Time: 27.867005 sec
+GFLOPS: 4.9320
+Run 3
+M=4096 N=4096 K=4096
+Time: 27.998152 sec
+GFLOPS: 4.9089
+Run 4
+M=4096 N=4096 K=4096
+Time: 27.599387 sec
+GFLOPS: 4.9798
+Run 5
+M=4096 N=4096 K=4096
+Time: 27.411197 sec
+GFLOPS: 5.0140
+Run 6
+M=4096 N=4096 K=4096
+Time: 27.602704 sec
+GFLOPS: 4.9792

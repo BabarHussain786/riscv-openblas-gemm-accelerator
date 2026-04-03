@@ -1,0 +1,29 @@
+=======================================
+Kernel: igemm_kernel_8x4_zvl128b_lmul1_unroll4
+Core: 4 (General Cluster)
+Shape: Square (4096 x 4096 x 4096)
+=======================================
+Run 1
+M=4096 N=4096 K=4096
+Time: 16.444187 sec
+GOPS: 8.3579
+Run 2
+M=4096 N=4096 K=4096
+Time: 16.680265 sec
+GOPS: 8.2396
+Run 3
+M=4096 N=4096 K=4096
+Time: 16.442051 sec
+GOPS: 8.3590
+Run 4
+M=4096 N=4096 K=4096
+Time: 16.677480 sec
+GOPS: 8.2410
+Run 5
+M=4096 N=4096 K=4096
+Time: 16.436550 sec
+GOPS: 8.3618
+Run 6
+M=4096 N=4096 K=4096
+Time: 16.676739 sec
+GOPS: 8.2414

@@ -1,0 +1,1 @@
+gcc -O3 -march=rv64gcv_zvl256b -mabi=lp64d -std=c11 -Wall -Wno-unknown-pragmas dgemm_kernel_8x8_zvl256b_unroll8.c dgemm_bench.c -o bench
