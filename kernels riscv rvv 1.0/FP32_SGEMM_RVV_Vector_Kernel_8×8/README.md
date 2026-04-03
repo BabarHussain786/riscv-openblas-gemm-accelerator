@@ -1,7 +1,7 @@
 # RVV 1.0 OpenBLAS SGEMM Benchmark (Banana Pi BPI-F3 / Zvl128b)
 
 This repository contains **FP32 SGEMM (single-precision) micro-kernel benchmarks** for **RISC-V RVV 1.0** on **128-bit vector length (Zvl128b)** hardware (e.g., Banana Pi BPI-F3).  
-It evaluates the OpenBLAS-style SGEMM kernel and its **fractional LMUL (mf2)** variants, including **pragma-based K-loop unrolling**.
+It evaluates the OpenBLAS-style SGEMM kernel and its **fractional LMUL (mf2)** variants, including **pragma-based loop unrolling**.
 
 Each variant is runnable standalone using the same structure:
 - `sgemm_kernel_8x8_zvl128b.c` (kernel)
