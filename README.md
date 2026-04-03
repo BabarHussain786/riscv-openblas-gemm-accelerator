@@ -1,96 +1,87 @@
-# riscv-openblas-gemm-accelerator — Kernel Overview
+# riscv-openblas-gemm-accelerator — Kernel Overview (FP32 / FP64 / INT8 / IME)
 
-This document provides a consolidated index of kernel suites in this repository and their tuning intent.
+This document provides a consolidated index of kernel suites in this repository and their optimization purpose.
 
 ---
 
 ## Repository focus
 
-`riscv-openblas-gemm-accelerator` explores GEMM micro-kernel optimization on **RISC-V RVV 1.0** by sweeping implementation parameters such as:
+`riscv-openblas-gemm-accelerator` explores GEMM micro-kernel optimization on **RISC-V RVV 1.0** across multiple datatypes and tile shapes by sweeping:
 
 - **LMUL** (vector register grouping),
 - **Unrolling factor**, and
-- kernel tile shapes (e.g., 16×8, 8×8, 8×4).
+- kernel tile configurations (e.g., 16×8, 8×8, 8×4).
 
-The goal is empirical: identify the best-performing variant per datatype and kernel shape under identical benchmark conditions.
-
----
-
-## Kernel suites
-
-### 1) FP32 SGEMM RVV Vector Kernel 16×8
-**Path:** `kernels riscv rvv 1.0/FP32_SGEMM_RVV_Vector_Kernel_16×8`
-
-- Datatype: FP32
-- Tile: 16×8
-- Focus: LMUL × unrolling tuning for SGEMM
-- Typical variants: baseline + `lmul{1,2,4,8}_unroll{1,2,4,8}`
+Goal: empirically identify the best variant for each datatype/shape under consistent benchmark conditions.
 
 ---
 
-### 2) FP32 SGEMM RVV Vector Kernel 8×8
-**Path:** `kernels riscv rvv 1.0/FP32_SGEMM_RVV_Vector_Kernel_8×8`
+## Kernel suite index
 
-- Datatype: FP32
-- Tile: 8×8
-- Focus: LMUL × unrolling tuning for SGEMM
-- Typical variants: baseline + LMUL/unroll combinations
+### FP32 SGEMM RVV Vector Kernel 16×8
+**Path:** `kernels riscv rvv 1.0/FP32_SGEMM_RVV_Vector_Kernel_16×8`  
+- Datatype: FP32  
+- Tile: 16×8  
+- Scope: LMUL × unroll tuning for SGEMM  
+
+### FP32 SGEMM RVV Vector Kernel 8×8
+**Path:** `kernels riscv rvv 1.0/FP32_SGEMM_RVV_Vector_Kernel_8×8`  
+- Datatype: FP32  
+- Tile: 8×8  
+- Scope: LMUL × unroll tuning for SGEMM  
+
+### FP64 Double DGEMM Kernel 8x4
+**Path:** `kernels riscv rvv 1.0/FP64_Double_dgemm_kernel_8x4`  
+- Datatype: FP64  
+- Tile: 8×4  
+- Scope: LMUL × unroll tuning for DGEMM  
+
+### FP64 Double DGEMM Kernel 8x8
+**Path:** `kernels riscv rvv 1.0/FP64_Double_dgemm_kernel_8x8`  
+- Datatype: FP64  
+- Tile: 8×8  
+- Scope: LMUL × unroll tuning for DGEMM  
+
+### IGEMM RVV 8x4 i8i32
+**Path:** `kernels riscv rvv 1.0/igemm_rvv_8x4_i8i32`  
+- Datatype: INT8 inputs with INT32 accumulation/output  
+- Tile: 8×4  
+- Scope: LMUL × unroll tuning for integer GEMM  
 
 ---
 
-### 3) FP64 Double DGEMM Kernel 8x4
-**Path:** `kernels riscv rvv 1.0/FP64_Double_dgemm_kernel_8x4`
+## IME + INT8 acceleration context
 
-- Datatype: FP64
-- Tile: 8×4
-- Focus: LMUL × unrolling tuning for DGEMM
-- Output metric: runtime/GFLOPS across variants
+This repository also targets an **IME/INT8 acceleration workflow** through low-precision kernel benchmarking and tuning.
 
----
-
-### 4) FP64 Double DGEMM Kernel 8x8
-**Path:** `kernels riscv rvv 1.0/FP64_Double_dgemm_kernel_8x8`
-
-- Datatype: FP64
-- Tile: 8×8
-- Focus: LMUL × unrolling tuning for DGEMM
-- Output metric: runtime/GFLOPS across variants
-
----
-
-### 5) IGEMM RVV 8x4 i8i32
-**Path:** `kernels riscv rvv 1.0/igemm_rvv_8x4_i8i32`
-
-- Datatype: INT8 inputs with INT32 accumulation/output
-- Tile: 8×4
-- Focus: LMUL × unrolling tuning for low-precision GEMM
-- Output metric: runtime/throughput (e.g., GOPS), stability
+- Low-precision compute path: **INT8 × INT8 → INT32 accumulate**
+- Optimization knobs: same **LMUL + unroll** exploration method as FP kernels
+- Objective: maximize throughput (e.g., GOPS) while preserving stability and repeatability
+- Practical use: identify the most efficient integer micro-kernel configuration per hardware target
 
 ---
 
 ## Common tuning dimensions
 
 ### LMUL
-- **LMUL1**: lower register pressure, conservative baseline
+- **LMUL1**: conservative, lower register pressure
 - **LMUL2**: moderate vector grouping
-- **LMUL4**: higher parallelism with increased pressure
-- **LMUL8**: aggressive grouping; may help or regress depending on pressure/cache effects
+- **LMUL4**: higher parallelism, higher pressure
+- **LMUL8**: aggressive grouping, may improve or regress depending on pressure/cache behavior
 
 ### Unrolling factor
 - **unroll1 / unroll2 / unroll4 / unroll8**
-- Higher unroll usually reduces loop overhead and can increase ILP
-- Too much unrolling can degrade due to code-size, register pressure, or I-cache effects
+- Higher unroll often reduces loop overhead and can improve ILP
+- Too much unroll can hurt due to code size, register pressure, instruction-cache pressure
 
 ---
 
-## Benchmark philosophy
+## Benchmarking methodology (recommended)
 
-To compare variants fairly:
-
-1. Use identical matrix sizes and iteration counts
-2. Pin CPU/core policy consistently (e.g., `taskset -c 0`)
-3. Keep compiler/toolchain flags constant
-4. Report both **best** and **average** metrics
+1. Keep matrix sizes and iteration count constant
+2. Keep compiler/toolchain flags constant
+3. Pin execution to fixed cores (e.g., `taskset -c 0`)
+4. Collect both **best** and **average** results
 5. Track run-to-run variance
 
 ---
@@ -102,7 +93,7 @@ make clean && make
 taskset -c 0 ./bench 2048 2048 2048
 ```
 
-If orchestration exists:
+If scripts exist:
 
 ```bash
 chmod +x *.sh
@@ -111,18 +102,18 @@ chmod +x *.sh
 
 ---
 
-## Suggested reporting table format
+## Suggested summary table
 
-| Suite | Variant | Best Time | Avg Time | Best GFLOPS/GOPS | Avg GFLOPS/GOPS | Notes |
-|------|---------|-----------|----------|------------------|-----------------|-------|
-| FP32 16×8 | lmul2_unroll4 | ... | ... | ... | ... | ... |
-| FP32 8×8  | lmul4_unroll2 | ... | ... | ... | ... | ... |
-| FP64 8×4  | lmul2_unroll4 | ... | ... | ... | ... | ... |
-| FP64 8×8  | lmul4_unroll1 | ... | ... | ... | ... | ... |
-| i8i32 8×4 | lmul2_unroll8 | ... | ... | ... | ... | ... |
+| Suite | Datatype | Tile | Best Time | Avg Time | Best Perf (GFLOPS/GOPS) | Avg Perf | Best Variant |
+|------|----------|------|-----------|----------|---------------------------|----------|--------------|
+| FP32 16×8 | FP32 | 16×8 | ... | ... | ... | ... | ... |
+| FP32 8×8  | FP32 | 8×8  | ... | ... | ... | ... | ... |
+| FP64 8x4  | FP64 | 8×4  | ... | ... | ... | ... | ... |
+| FP64 8x8  | FP64 | 8×8  | ... | ... | ... | ... | ... |
+| IGEMM 8x4 i8i32 | INT8→INT32 | 8×4 | ... | ... | ... | ... | ... |
 
 ---
 
 ## Bottom line
 
-This repository is an RVV micro-kernel tuning framework for SGEMM/DGEMM/IGEMM families, centered on selecting the best **LMUL + unrolling factor** combination per kernel shape and datatype through reproducible benchmarking.
+`*
