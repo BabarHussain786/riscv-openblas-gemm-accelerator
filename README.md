@@ -114,6 +114,4 @@ chmod +x *.sh
 
 ---
 
-## Bottom line
 
-`*
