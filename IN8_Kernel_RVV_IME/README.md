@@ -234,8 +234,3 @@ taskset -c 0 ./ime_diag
 
 
 
----
-
-## 12) License / Ownership
-
-Add your project license and ownership details here.
