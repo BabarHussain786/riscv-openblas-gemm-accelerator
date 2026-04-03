@@ -1,57 +1,81 @@
-# RVV 1.0 OpenBLAS SGEMM Benchmark (Banana Pi BPI-F3 / Zvl128b)
+# FP32 SGEMM RVV Vector Kernel 8×8 (Zvl128b)
+## LMUL × Unrolling-Factor Exploration
 
-This repository contains **FP32 SGEMM (single-precision) micro-kernel benchmarks** for **RISC-V RVV 1.0** on **128-bit vector length (Zvl128b)** hardware (e.g., Banana Pi BPI-F3).  
-It evaluates the OpenBLAS-style SGEMM kernel and its **fractional LMUL (mf2)** variants, including **pragma-based loop unrolling**.
+This suite evaluates FP32 8×8 SGEMM kernels by sweeping:
 
-Each variant is runnable standalone using the same structure:
-- `sgemm_kernel_8x8_zvl128b.c` (kernel)
-- `sgemm_bench.c` (driver)
-- `Makefile`
-- `run.sh` (runs 4 shapes × 6 times, logs output)
+- **LMUL** (vector register grouping), and
+- **Unrolling factor** (how many operations are expanded per iteration).
 
 ---
 
-## Benchmark Variants (Folders)
+## What this suite is trying to do
 
-Tested and stored these FP32 variants (Zvl128b):
+Find the best-performing variant by testing all LMUL/unrolling combinations under identical benchmark conditions, then comparing:
 
-- **OpenBLAS_Baseline_Kernel_FP32**  
-  Baseline kernel (no fractional LMUL)
-
-- **OpenBLAS_Baseline_Kernel_FP32_Fractional**  
-  Fractional LMUL **mf2** (no pragma unroll)
-
-- **OpenBLAS_Baseline_Kernel_FP32_Fractional-unroll2**  
-  Fractional LMUL **mf2** + `#pragma GCC unroll 2`
-
-- **OpenBLAS_Baseline_Kernel_FP32_Fractional-unroll4**  
-  Fractional LMUL **mf2** + `#pragma GCC unroll 4`
-
-- **OpenBLAS_Baseline_Kernel_FP32_Fractional-unroll8**  
-  Fractional LMUL **mf2** + `#pragma GCC unroll 8`
-
+- best/avg runtime
+- best/avg GFLOPS
+- run-to-run stability
 
 ---
 
-## Repository Layout (Per Variant)
+## Meaning of LMUL
 
-Each benchmark folder contains:
-
-- `sgemm_kernel_8x8_zvl128b.c` — SGEMM kernel implementation
-- `sgemm_bench.c` — benchmark driver (runs one GEMM and prints time + GFLOPS)
-- `Makefile` — builds `bench`
-- `run.sh` — runs four shapes, **6 runs each**, saves log automatically
-- `best_shapes_*.log` — generated results
+- **LMUL1**: low register usage, conservative baseline  
+- **LMUL2**: moderate parallelism increase  
+- **LMUL4**: higher parallelism, higher register pressure  
+- **LMUL8**: maximum grouping in this suite, highest pressure/risk
 
 ---
 
-## How to Clone
+## Meaning of Unrolling Factor (only)
+
+Unrolling factor = how many repeated compute steps are emitted per loop pass:
+
+- **unroll1**: baseline (minimal expansion)
+- **unroll2**: moderate expansion
+- **unroll4**: stronger expansion
+- **unroll8**: aggressive expansion
+
+### Effect of higher unrolling factor
+- less loop-control overhead
+- more instruction-level parallelism opportunity
+- larger code size
+- potentially higher register pressure / instruction-cache pressure
+
+So higher unrolling can improve performance up to a point; beyond that, it may regress.
+
+---
+
+## Variant list
+
+Populate this section from actual folder names in this directory (LMUL/unroll combinations and baseline variants), for example:
+
+- `...lmul1_unroll1`
+- `...lmul1_unroll2`
+- `...lmul2_unroll4`
+- `...lmul4_unroll8`
+- etc.
+
+> Keep names exactly as directory names for reproducibility.
+
+---
+
+## Run flow
 
 ```bash
-git clone https://github.com/BabarHussain786/riscv-openblas-gemm-accelerator.git
-cd riscv-openblas-gemm-accelerator/"Banana-pi_1.0_rvv_OpenBLAS_ Benchmark_FP32"
+make clean && make
+taskset -c 0 ./bench 2048 2048 2048
+```
 
-chmod +x run_all.sh
-for d in OpenBLAS_*; do chmod +x "$d/run.sh"; done
+If orchestration scripts exist:
 
+```bash
+chmod +x *.sh
 ./run_all.sh
+```
+
+---
+
+## Bottom line
+
+This suite is an empirical tuning framework to select the best **LMUL + unrolling factor** pair for FP32 8×8 SGEMM on your target RVV platform.
